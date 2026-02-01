@@ -36,7 +36,7 @@ namespace GAME02{
 	int Soundgame1 = 0;
 
 	//ヨット
-	int Soundgame2 = 0;
+	
 	int gameend = 0;
 	int role = 3;
 	int round = 12;
@@ -111,7 +111,6 @@ namespace GAME02{
 		diceimg[5] = loadImage("..\\MAIN\\assets\\game02\\dice6.png");
 		//音楽をロード
 		Soundgame1 = loadSound("..\\MAIN\\assets\\game02\\BGM.wav");
-
 		//メインループ側でのESCキーでの終了判定を無効化する
 		EscapeKeyValid = false;
 		textSize(200);
@@ -122,7 +121,6 @@ namespace GAME02{
 		//メインループ側でのESCキーでの終了判定を有効化する
 		EscapeKeyValid = true;
 		stopSound(Soundgame1);
-		stopSound(Soundgame2);
 		gameselect = 0;
 		gamest = 0;
 		reset();
@@ -206,6 +204,7 @@ namespace GAME02{
 		}
 	}
 	void GAME::yaku() {
+		textSize(70);
 		if (syori != 0) {
 			//普通
 			for (int h = 0; h <= 5; h++) {
@@ -750,44 +749,66 @@ namespace GAME02{
 		if (mouseY >= 600) {
 			textSize(45);
 			if (mouseX > 147 && mouseX < 294){
-				text("1のサイコロの出目の数", 0, 500);
+				text("エース",0,400);
+				text("1のサイコロの出目の数", 0, 460);
+			
 			}
 			if (mouseX > 294 && mouseX < 441) {
-				text("2のサイコロの出目の数", 0, 500);
+				text("デュース", 0, 400);
+				text("2のサイコロの出目の数", 0, 460);
+				
 			}
 			if (mouseX > 441 && mouseX < 588) {
-				text("3のサイコロの出目の数", 0, 500);
+				text("トレイ", 0, 400);
+				text("3のサイコロの出目の数", 0, 460);
+				
 			}
 			if (mouseX > 588 && mouseX < 735) {
-				text("4のサイコロの出目の数", 0, 500);
+				text("フォー", 0, 400);
+				text("4のサイコロの出目の数", 0, 460);
+				
 			}
 			if (mouseX > 735 && mouseX < 882) {
-				text("5のサイコロの出目の数", 0, 500);
+				text("ファイブ", 0, 400);
+				text("5のサイコロの出目の数", 0, 460);
+				
 			}
 			if (mouseX > 882 && mouseX < 1029) {
-				text("6のサイコロの出目の数", 0, 500);
+				text("シックス", 0, 400);
+				text("6のサイコロの出目の数", 0, 460);
+				
 			}
 			if (mouseX > 1029 && mouseX < 1176) {
-				text("全てのサイコロを足した数", 0, 500);
+				text("チョイス", 0, 400);
+				text("全てのサイコロを足した数", 0, 460);
 			}
 			if (mouseX > 1176 && mouseX < 1323) {
-				text("4つ同じサイコロが揃った役", 0, 500);
+				text("フォーダイス", 0, 400);
+				text("4つ同じサイコロが揃った役", 0, 460);
 			}
 			if (mouseX > 1323 && mouseX < 1470) {
-				text("3つと2つのサイコロの役", 0, 500);
+				text("フルハウス", 0, 400);
+				text("3つと2つのサイコロの役", 0, 460);
 			}
 			if (mouseX > 1470 && mouseX < 1617) {
-				text("サイコロの数が4つ並んだ役", 0, 500);
+				text("Sストレート", 0, 400);
+				text("サイコロの数が4つ並んだ役", 0, 460);
+				text("点数:15点固定", 0, 520);
 			}
 			if (mouseX > 1617 && mouseX < 1764) {
-				text("サイコロの数が5つ並んだ役", 0, 500);
+				text("Bストレート", 0, 400);
+				text("サイコロの数が5つ並んだ役", 0, 460);
+				text("点数:30点固定", 0, 520);
 			}
 			if (mouseX > 1764 && mouseX < 1920) {
-				text("5つ同じサイコロが揃った役", 0, 500);
+				text("ヨット", 0, 400);
+				text("5つ同じサイコロが揃った役", 0, 460);
+				text("点数:50点固定", 0, 520);
 			}
 		}
 	}	 
 	void GAME::proc() {
+		clear(0,80,0);
 		stroke(255);
 		strokeWeight(10);
 		text("十字キー左右でセレクト", 0, 1060);
@@ -967,7 +988,7 @@ namespace GAME02{
 		if (gameselect == 2) {
 			//BGM　ON
 			if (BGM == 0) {
-				playLoopSound(Soundgame2);//音楽再生
+				playLoopSound(Soundgame1);//音楽再生
 				BGM = 1;
 			}
 			if (gamest == 0) {
@@ -1012,13 +1033,13 @@ namespace GAME02{
 				//12回ずつ行動したあと勝利者発表
 				if (tarn == 24){
 					if (sumMEall > sumME2all) {
-						text("1Pの勝利！", 1100, 400);
+						text("1Pの勝利！", 1100, 350);
 					}
 					if (sumMEall < sumME2all) {
-						text("2Pの勝利！", 1100, 400);
+						text("2Pの勝利！", 1100, 350);
 					}
 					if (sumMEall == sumME2all) {
-						text("DRAW", 1100, 400);
+						text("DRAW", 1100, 350);
 					}
 				}
 			}
@@ -1026,8 +1047,15 @@ namespace GAME02{
 		fill(255);
 		textSize(50);
 		text("ESCキーでメニューに戻る", 1330, 50);
-		if (isTrigger(KEY_ESCAPE)) {
+		if (isTrigger(KEY_ESCAPE) && gameselect == 0) {
 			main()->backToMenu();
+		}
+		if (isTrigger(KEY_ESCAPE) && gameselect != 0) {
+			gameselect = 0;
+			gamest = 0;
+			stopSound(Soundgame1);
+			BGM = 0;
+			reset();
 		}
 	}
 }
