@@ -599,10 +599,12 @@ namespace GAME02{
 			}
 			if (sumME123456 >= 63) {
 				sumME123456 += 35;
+				sumMEall += 35;
 				bonus1 = 1;
 			}
 			if (sumME2123456 >= 63) {
 				sumME2123456 += 35;
+				sumME2all += 35;
 				bonus2 = 1;
 			}
 		}
@@ -768,7 +770,7 @@ namespace GAME02{
 		if (warning == 1) {
 			text("既に数が入っています", 600, 600);
 		}
-		
+		fill(255);
 		text(tensuME[0], 157, 700);//1
 		text(tensuME[1], 304, 700);//2
 		text(tensuME[2], 451, 700);//3
@@ -793,7 +795,126 @@ namespace GAME02{
 		text(tensuME2[9], 1480, 800);//ss
 		text(tensuME2[10], 1627, 800);//bs
 		text(tensuME2[11], 1774, 800);//yot
-		//合計部分
+		if (fME[0] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[0], 157, 700);//1
+			fill(255);
+		}
+		if (fME[1] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[1], 304, 700);//2
+			fill(255);
+		}
+		if (fME[2] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[2], 451, 700);//3
+			fill(255);
+		}
+		if (fME[3] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[3], 598, 700);//4
+			fill(255);
+		}
+		if (fME[4] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[4], 745, 700);//5
+			fill(255);
+		}
+		if (fME[5] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[5], 892, 700);//6
+			fill(255);
+		}
+		if (fME[6] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[6], 1039, 700);//tyois
+			fill(255);
+		}
+		if (fME[7] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[7], 1186, 700);//four dise
+			fill(255);
+		}
+		if (fME[8] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[8], 1333, 700);//full house
+			fill(255);
+		}
+		if (fME[9] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[9], 1480, 700);//ss
+			fill(255);
+		}
+		if (fME[10] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[10], 1627, 700);//bs
+			fill(255);
+		}
+		if (fME[11] == 1) {
+			fill(255, 0, 0);
+			text(tensuME[11], 1774, 700);//yot
+			fill(255);
+		}
+		if (fME2[0] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[0], 157, 800);//1
+			fill(255);
+		}
+		if (fME2[1] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[1], 304, 800);//2
+			fill(255);
+		}
+		if (fME2[2] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[2], 451, 800);//3
+			fill(255);
+		}
+		if (fME2[3] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[3], 598, 800);//4
+			fill(255);
+		}
+		if (fME2[4] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[4], 745, 800);//5
+			fill(255);
+		}
+		if (fME2[5] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[5], 892, 800);//6
+			fill(255);
+		}
+		if (fME2[6] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[6], 1039, 800);//tyois
+			fill(255);
+		}
+		if (fME2[7] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[7], 1186, 800);//four dise
+			fill(255);
+		}
+		if (fME2[8] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[8], 1333, 800);//full house
+			fill(255);
+		}
+		if (fME2[9] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[9], 1480, 800);//ss
+			fill(255);
+		}
+		if (fME2[10] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[10], 1627, 800);//bs
+			fill(255);
+		}
+		if (fME2[11] == 1) {
+			fill(0, 0, 255);
+			text(tensuME2[11], 1774, 800);//yot
+			fill(255);
+		}
 		
 		//プレイヤー表示
 		text("1P", 10, 700);
@@ -819,44 +940,62 @@ namespace GAME02{
 			if (mouseX > 147 && mouseX < 294){
 				text("エース",0,400);
 				text("1のサイコロの出目の数", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[0], 200, 520);
 			
 			}
 			if (mouseX > 294 && mouseX < 441) {
 				text("デュース", 0, 400);
 				text("2のサイコロの出目の数", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[1], 200, 520);
 				
 			}
 			if (mouseX > 441 && mouseX < 588) {
 				text("トレイ", 0, 400);
 				text("3のサイコロの出目の数", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[2], 200, 520);
 				
 			}
 			if (mouseX > 588 && mouseX < 735) {
 				text("フォー", 0, 400);
 				text("4のサイコロの出目の数", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[3], 200, 520);
 				
 			}
 			if (mouseX > 735 && mouseX < 882) {
 				text("ファイブ", 0, 400);
 				text("5のサイコロの出目の数", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[4], 200, 520);
 				
 			}
 			if (mouseX > 882 && mouseX < 1029) {
 				text("シックス", 0, 400);
 				text("6のサイコロの出目の数", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[5], 200, 520);
 				
 			}
 			if (mouseX > 1029 && mouseX < 1176) {
 				text("チョイス", 0, 400);
 				text("全てのサイコロを足した数", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[6], 200, 520);
 			}
 			if (mouseX > 1176 && mouseX < 1323) {
 				text("フォーダイス", 0, 400);
 				text("4つ同じサイコロが揃った役", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[7], 200, 520);
 			}
 			if (mouseX > 1323 && mouseX < 1470) {
 				text("フルハウス", 0, 400);
 				text("3つと2つのサイコロの役", 0, 460);
+				text("今の点数:", 0, 520);
+				text(diceKARI[8], 200, 520);
 			}
 			if (mouseX > 1470 && mouseX < 1617) {
 				text("Sストレート", 0, 400);
