@@ -10,12 +10,14 @@
 #include <string>
 #include <ctime>
 namespace GAME01 {
-	int KANJI::cont = 0;
+	int GAME01::KANJI::cont = 0;
+	/*int GAME01::KANJI::correctStreak = 0;
+	int GAME01::KANJI::totalPoint = 0;*/
 	void KANJI::game() {
 		clear(0, 0, 64);
 		textSize(55);
 		fill(255, 255, 255);
-		text("難易度を選んでください。※「」内のキーを入力すると進みます。", 20, 200);
+		text("難易度を選んでください。※「」内のキーを入力すると確定。", 20, 200);
 		text("", 20, 280);
 		text("[←]キーでメニューに戻る", 90, 1000);
 		fill(100, 120, 105);
@@ -32,7 +34,7 @@ namespace GAME01 {
 		fill(255, 255, 255);
 		clear(0, 0, 64);
 		textSize(80);
-		text("上の漢字の読み方を答えてください。", 20, 700);
+		text("上の漢字の読み方を答えてください。SPACEで確定。", 20, 700);
 		textSize(55);
 		text("[←]キーでメニューに戻る", 90, 1000);
 		text("[↓]キーで1文字削除", 800, 1000);
@@ -55,12 +57,11 @@ namespace GAME01 {
 		{"mya","みゃ"},{"myu","みゅ"},{"myo","みょ"},
 		{"rya","りゃ"},{"ryu","りゅ"},{"ryo","りょ"},
 
-		{"shi","し"},{"ti","ち"},{"tsu","つ"},
-		{"tu","つ"},
+		{"shi","し"},{"chi","ち"},{"tsu","つ"},
 
 		{"ka","か"},{"ki","き"},{"ku","く"},{"ke","け"},{"ko","こ"},
-		{"sa","さ"},{"su","す"},{"se","せ"},{"so","そ"},
-		{"ta","た"},{"te","て"},{"to","と"},
+		{"sa","さ"},{"si","し"},{"su","す"},{"se","せ"},{"so","そ"},
+		{"ta","た"},{"ti","ち"},{"tu","つ"},{"te","て"},{"to","と"},
 		{"na","な"},{"ni","に"},{"nu","ぬ"},{"ne","ね"},{"no","の"},
 		{"ha","は"},{"hi","ひ"},{"fu","ふ"},{"he","へ"},{"ho","ほ"},
 		{"ma","ま"},{"mi","み"},{"mu","む"},{"me","め"},{"mo","も"},
@@ -74,6 +75,7 @@ namespace GAME01 {
 		{"pa","ぱ"},{"pi","ぴ"},{"pu","ぷ"},{"pe","ぺ"},{"po","ぽ"},
 
 		{"a","あ"},{"i","い"},{"u","う"},{"e","え"},{"o","お"},
+		{"ji","じ"}
 	};
 
 	for (auto& e : table) {
@@ -223,15 +225,6 @@ namespace GAME01 {
 				// まだ判定していない
 				if (isTrigger(KEY_SPACE)) {
 					if (displayStr[0] != '\0') {
-						/*triming(inputStrB);*/
-						
-						char buf3[256];
-						sprintf_s(buf3,
-							"[DEBUG] displayStr=%s / correct=%s / idx=%d",
-							displayStr,
-							kanji[currentKanji].yomi,
-							currentKanji
-						);
 						textSize(30);
 						fill(0, 255, 0);
 						KanswerCorrect = strcmp(displayStr, kanji[currentKanji].yomi) == 0;
@@ -250,7 +243,7 @@ namespace GAME01 {
 					if (correctStreak >= 10) {
 						totalPoint++;
 						correctStreak = 0;
-						savePoint();   // ← 後述
+						savePoint();
 					}
 					cont = 0;
 				}
@@ -340,3 +333,7 @@ namespace GAME01 {
 			}
 		}
 	}
+
+	//メモ
+	//漢字追加・メニュー画面の制限時間表記削除or制限時間機能追加
+	//初期化　メニュー→漢字→前の情報を残すか消すか(数値)「shiftは数値残る、Enterは消える」
