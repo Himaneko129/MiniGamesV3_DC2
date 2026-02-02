@@ -117,10 +117,10 @@ namespace GAME01 {
 		text("H", 1060, 100);
 	}
 	void MATH::anser4() {
-		/*l‘¥‰‰Z[Å‘å2Œ…€2Œ…](Z€Z)Mg‚ª0‚É‚È‚é‘Îô@“š‚¦‚ª0‚É‚È‚è‚·‚¬‚È‚¢‚æ‚¤‚É*/
+		/*l‘¥‰‰Z[Å‘å3Œ…€2Œ…](Z€Z)Mg‚ª0‚É‚È‚é‘Îô@“š‚¦‚ª0‚É‚È‚è‚·‚¬‚È‚¢‚æ‚¤‚É*/
 		if (!anser4Generated) {
-			do { Mg = random() % 100; } while (Mg == 0);
-			Mh = random() % 100;
+			do { Mg = random() % 150; } while (Mg == 0);
+			Mh = random() % 20;
 			Manser4 = Mg / Mh;
 			anser4Generated = true;
 		}

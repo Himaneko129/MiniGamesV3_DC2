@@ -21,12 +21,6 @@ namespace GAME01 {
 		int inputLenB = 0;
 		void loadKanjiImages();
 		bool romajiToKana(const char* src, char* dst);
-		bool Kanser1Generated = false;
-		bool Kanser2Generated;
-		bool Kanser3Generated;
-		bool Kanser4Generated;
-		bool Kanser5Generated;
-		bool Kanser6Generated;
 		bool KanswerChecked = false;
 		bool KanswerCorrect = false;
 		bool Meter = false;
@@ -38,6 +32,7 @@ namespace GAME01 {
 		bool rewardGiven;
 	public:
 		static int cont;
+		bool Kanser1Generated = false;
 		void game();
 		void Kanser1();
 		void updateDisplay();
