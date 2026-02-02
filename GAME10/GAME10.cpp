@@ -164,7 +164,7 @@ namespace GAME10
 {
     struct P { int x, y; };
 
-    // === ゲームデータ ===
+    // ゲームデータ 
     std::vector<P> snake;
     P food;
     int dx = 1, dy = 0;
@@ -172,13 +172,18 @@ namespace GAME10
     int timer = 0;
     int score = 0;
     bool gameOver = false;
+    bool showIntro = true;
     int W, H;
 
-    // --- 追加：制限時間関連 ---
+    int moveT = 0;
+
+    // 追加：制限時間関連
     static long long startTime = 0;
     static const int TIME_LIMIT_MS = 20000;
+    static int timeBonus = 0;
 
-    // === ゲーム初期化 ===
+
+    // ゲーム初期化 
     int GAME::create() {
         W = 1920;
         H = 1080;
@@ -193,39 +198,65 @@ namespace GAME10
         timer = 0;
         score = 0;
         gameOver = false;
+        timeBonus = 0;
+        moveT = 0;
 
-        // --- 追加：開始時間を記録 ---
+        //  追加：開始時間を記録
         startTime = duration_cast<milliseconds>(
             steady_clock::now().time_since_epoch()
         ).count();
+
 
         return 0;
     }
 
     void GAME::destroy() {}
 
-    // === メイン処理 ===
+    //メイン処理 
     void GAME::proc() {
         clear(255, 255, 255);
+        if (showIntro) {
+            fill(0);
+            textSize(70);
+            text("SNAKE GAME", W / 2 - 220, 200);
 
-        // ===============================
+            textSize(32);
+            text("操作方法", 200, 340);
+            text("・WASD / 矢印キーで移動", 200, 390);
+            text("・壁や自分の体に当たるとゲームオーバー", 200, 440);
+            text("・エサを食べるとスコアUP & 時間が増える", 200, 490);
+            text("・制限時間：20秒", 200, 540);
+
+            fill(50, 120, 255);
+            textSize(40);
+            text("SPACEキーでスタート", W / 2 - 220, 700);
+
+            if (isTrigger(KEY_SPACE)) {
+                showIntro = false;
+
+                //  ゲーム開始時刻をここで設定
+                startTime = duration_cast<milliseconds>(
+                    steady_clock::now().time_since_epoch()
+                ).count();
+            }
+            return;
+        }
+
         // 時間計測
-        // ===============================
         long long currentTime = duration_cast<milliseconds>(
             steady_clock::now().time_since_epoch()
         ).count();
 
         long long elapsed = currentTime - startTime;
-        int remainingTime = max(0, (TIME_LIMIT_MS - (int)elapsed) / 1000);
+        long long limit = TIME_LIMIT_MS + timeBonus;
+        int remainingTime = max(0, (limit - (int)elapsed) / 1000);
 
-        // ===============================
         // ゲームオーバー画面
-        // ===============================
         if (gameOver) {
             textSize(60);
             fill(255, 0, 0);
 
-            if (elapsed >= TIME_LIMIT_MS)
+            if (elapsed >= limit)
                 text("TIME UP!", W / 2 - 150, H / 2 - 120);
             else
                 text("GAME OVER", W / 2 - 180, H / 2 - 120);
@@ -239,20 +270,27 @@ namespace GAME10
             if (isTrigger(KEY_SPACE)) {
                 create();
             }
+            // メニューに戻る
+            textSize(30);
+            fill(100);
+            text("Press ENTER to return menu", 50, H - 50);
+            if (isTrigger(KEY_ENTER)) {
+                main()->backToMenu();
+                return;
+            }
             return;
         }
 
-        // ===============================
+
         // 時間切れチェック
-        // ===============================
-        if (elapsed >= TIME_LIMIT_MS) {
+        if (elapsed >= limit) {
             gameOver = true;
             return;
         }
 
-        // ===============================
+
         // 入力処理（WASD）
-        // ===============================
+
         if (isTrigger(KEY_W) && dy == 0) { dx = 0; dy = -1; }
         if (isTrigger(KEY_S) && dy == 0) { dx = 0; dy = 1; }
         if (isTrigger(KEY_A) && dx == 0) { dx = -1; dy = 0; }
@@ -262,12 +300,13 @@ namespace GAME10
         if (isTrigger(KEY_LEFT) && dx == 0) { dx = -1; dy = 0; }
         if (isTrigger(KEY_RIGHT) && dx == 0) { dx = 1; dy = 0; }
 
-        // ===============================
-        // 移動処理
-        // ===============================
-        timer++;
-        if (timer % 10 == 0) {
 
+        // 移動処理
+        timer++;
+
+        moveT++;
+        if (moveT >= 5) {
+            moveT = 0;
             P head = snake[0];
             P newHead = { head.x + dx, head.y + dy };
 
@@ -283,12 +322,14 @@ namespace GAME10
                     gameOver = true;
                     return;
                 }
+
             }
 
             // エサを食べた
             if (newHead.x == food.x && newHead.y == food.y) {
                 snake.insert(snake.begin(), newHead);
                 score += 10;
+                timeBonus += 3000;
                 food = { rand() % (W / grid), rand() % (H / grid) };
             }
             else {
@@ -297,9 +338,10 @@ namespace GAME10
             }
         }
 
-        // ===============================
-        // 描画
-        // ===============================
+
+
+
+
 
         // グリッド
         fill(255, 0, 0);
@@ -311,6 +353,7 @@ namespace GAME10
         // エサ
         fill(255, 100, 100);
         rect(food.x * grid, food.y * grid, grid, grid);
+    
 
         // スネーク
         fill(0, 200, 0);
@@ -318,12 +361,13 @@ namespace GAME10
             rect(p.x * grid, p.y * grid, grid, grid);
         }
 
+
         // スコア
         fill(0);
         textSize(40);
         text((std::string("SCORE: ") + std::to_string(score)).c_str(), 50, 50);
 
-        // --- 追加：残り時間表示 ---
+        //  追加：残り時間表示 
         text((std::string("TIME: ") + std::to_string(remainingTime) + " 秒").c_str(), 50, 100);
 
         // メニューに戻る
