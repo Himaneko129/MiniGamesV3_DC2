@@ -36,7 +36,6 @@ namespace GAME02{
 	int Soundgame1 = 0;
 
 	//ヨット
-	
 	int gameend = 0;
 	int role = 3;
 	int round = 12;
@@ -83,6 +82,9 @@ namespace GAME02{
 	int tarn = 0;
 	//役が成立したか
 	int yakuOK = 0;
+	//ボーナス点をもらったかどうか
+	int bonus1 = 0;
+	int bonus2 = 0;
 
 	int GAME::create() {
 		//ここにはゲーム開始時に1回だけ行うものを記述する
@@ -175,6 +177,8 @@ namespace GAME02{
 		w3 = 0;
 		w2 = 0;
 		tarn = 0;
+		bonus1 = 0;
+		bonus2 = 0;
 	}
 	void GAME::diceroll() {
 			yotreset();
@@ -593,9 +597,19 @@ namespace GAME02{
 			for (int i = 0; i < 5; i++){
 				diceHOZYN[i] = 0;
 			}
+			if (sumME123456 >= 63) {
+				sumME123456 += 35;
+				bonus1 = 1;
+			}
+			if (sumME2123456 >= 63) {
+				sumME2123456 += 35;
+				bonus2 = 1;
+			}
 		}
 	}
 	void GAME::lock() {
+		textSize(45);
+		text("↑のキーで数を固定",1450,590);
 		if (isTrigger(KEY_Z)) {
 			diceHOZYN[0] += 1;
 		}
@@ -698,6 +712,58 @@ namespace GAME02{
 			text("C", 1260, 510);
 			text("V", 1510, 510);
 			text("B", 1760, 510);
+			if ((diceHOZYN[0] % 2) == 1) {
+				if ((tarn % 2) == 0) {
+					fill(255, 0, 0);
+					text("Z", 760, 510);
+				}
+				if ((tarn % 2) == 1) {
+					fill(0, 0, 255);
+					text("Z", 760, 510);
+				}
+			}
+			if ((diceHOZYN[1] % 2) == 1) {
+				if ((tarn % 2) == 0) {
+					fill(255, 0, 0);
+					text("X", 1010, 510);
+				}
+				if ((tarn % 2) == 1) {
+					fill(0, 0, 255);
+					text("X", 1010, 510);
+				}
+			}
+			if ((diceHOZYN[2] % 2) == 1) {
+				if ((tarn % 2) == 0) {
+					fill(255, 0, 0);
+					text("C", 1260, 510);
+				}
+				if ((tarn % 2) == 1) {
+					fill(0, 0, 255);
+					text("C", 1260, 510);
+				}
+			}
+			if ((diceHOZYN[3] % 2) == 1) {
+				if ((tarn % 2) == 0) {
+					fill(255, 0, 0);
+					text("V", 1510, 510);
+				}
+				if ((tarn % 2) == 1) {
+					fill(0, 0, 255);
+					text("V", 1510, 510);
+				}
+			}
+			if ((diceHOZYN[4] % 2) == 1) {
+				if ((tarn % 2) == 0) {
+					fill(255, 0, 0);
+					text("B", 1760, 510);
+				}
+				if ((tarn % 2) == 1) {
+					fill(0, 0, 255);
+					text("B", 1760, 510);
+				}
+			}
+			fill(255);
+			
 		}
 		if (warning == 1) {
 			text("既に数が入っています", 600, 600);
@@ -737,10 +803,12 @@ namespace GAME02{
 		if ((tarn % 2) == 0) {
 			fill(255, 0, 0);
 			text("1P", 10, 700);
+			text("1P", 0, 70);
 		}
 		if ((tarn % 2) == 1) {
 			fill(0, 0, 255);
 			text("2P", 10, 800);
+			text("2P", 300, 70);
 		}
 		fill(255);
 	}
@@ -806,6 +874,16 @@ namespace GAME02{
 				text("点数:50点固定", 0, 520);
 			}
 		}
+		if (mouseX <= 588) {
+			textSize(45);
+			if (mouseY <= 350 && mouseY > 200){
+				text("プレイヤーごとの合計", 0, 400);
+			}
+			if (mouseY <= 200 && mouseY > 100) {
+				text("プレイヤーごとの小計", 0, 400);
+				text("小計が65点を超えると？...", 0, 460);
+			}
+		}
 	}	 
 	void GAME::proc() {
 		clear(0,80,0);
@@ -817,16 +895,15 @@ namespace GAME02{
 		text("←ブラックジャック", 50, 900);
 		text("ヨット→", 1400, 300);
 		textSize(70);
+		if (BGM == 0) {
+			playLoopSound(Soundgame1);//音楽再生
+			BGM = 1;
+		}
 		//ゲームの説明を入力する
 		if (isTrigger(KEY_LEFT) && gameselect == 0) { gameselect = 1; }
 		if (isTrigger(KEY_RIGHT) && gameselect == 0) { gameselect = 2; }
 		//ゲーム１
 		if (gameselect == 1) {
-			//BGM　ON
-			if (BGM == 0) {
-				playLoopSound(Soundgame1);//音楽再生
-				BGM = 1;
-			}
 			if (gamest == 0) {
 				//タイトル
 				clear(0, 80, 0);
@@ -986,11 +1063,6 @@ namespace GAME02{
 		}
 		//ゲーム２
 		if (gameselect == 2) {
-			//BGM　ON
-			if (BGM == 0) {
-				playLoopSound(Soundgame1);//音楽再生
-				BGM = 1;
-			}
 			if (gamest == 0) {
 				//タイトル
 				clear(0, 80, 0);
@@ -1007,8 +1079,10 @@ namespace GAME02{
 				UI();
 				help();
 				//サイコロを振る回数表示
-				if (pull == 0 && tarn !=0) {
-					textSize(70);
+				if (pull == 0 && tarn <= 24) {
+					textSize(40);
+					text("ENTERキーでサイコロを止める", 600, 45);
+					textSize(60);
 					text("引ける回数:", 600, 100);
 					text(role, 1000, 100);
 				}
@@ -1049,12 +1123,11 @@ namespace GAME02{
 		text("ESCキーでメニューに戻る", 1330, 50);
 		if (isTrigger(KEY_ESCAPE) && gameselect == 0) {
 			main()->backToMenu();
+			stopSound(Soundgame1);
 		}
 		if (isTrigger(KEY_ESCAPE) && gameselect != 0) {
 			gameselect = 0;
 			gamest = 0;
-			stopSound(Soundgame1);
-			BGM = 0;
 			reset();
 		}
 	}
