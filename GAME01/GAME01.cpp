@@ -53,6 +53,7 @@ namespace GAME01
 		textSize(30);
 		fill(255);
 		text("様々な漢字の問題を解くモードです。※不正解でも次に進めます。", 900, 780);
+		text("◆難読漢字にはその漢字の読みの虫食いと意味がヒントとして出ます。", 900, 820);
 		if (MATH::cont == 1) {
 			textSize(50);
 			fill(255);
@@ -80,7 +81,7 @@ namespace GAME01
 			if (isTrigger(KEY_ENTER)) {
 				MATH::cont = 0;
 				KANJI::cont = 0;
-				/*Kanser1Generated = false;*/
+				KANJI::correctStreak = 0;
 				main()->backToMenu();
 			}
 		}
@@ -94,6 +95,7 @@ namespace GAME01
 		else if (currentScene == 2) {
 			KANJI* Ikanji = GAME::kanji();
 			Ikanji->proc();
+			scene1 = 1;
 			if (isTrigger(KEY_LEFT)) {
 				currentScene = 0;
 			}
