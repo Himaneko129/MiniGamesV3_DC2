@@ -18,7 +18,7 @@ namespace GAME05 {
 		Vector_Y = 2;
 
 	}
-	void PLAYER::Player_MOVE() {
+	void PLAYER::Player_MOVE(int num) {
 		Last_Player_X = Player_X;
 		Last_Player_Y = Player_Y;
 		if (isPress(KEY_Q)) {
@@ -64,8 +64,16 @@ namespace GAME05 {
 		if (isPress(KEY_L)) {
 			Player_Y += 2;
 		}
+		if (num == 1) {
+		Player_X -= 4;
+		}
+		else if (num == 2) {
+			Player_X -= 4;
+		}
+		else if (num == 3) {
+			Player_X -= 3;
 
-		Player_X -= 3;
+		}
 	}
 	void PLAYER::Player_SELECT_MOVE() {
 		Last_Player_X = Player_X;

@@ -139,6 +139,7 @@
     <ClCompile Include="PLAYER.cpp" />
     <ClCompile Include="SELECT.cpp" />
     <ClCompile Include="STAGE2_MAP.cpp" />
+    <ClCompile Include="STAGE3_MAP.cpp" />
     <ClCompile Include="TITLE.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +149,7 @@
     <ClInclude Include="PLAYER.h" />
     <ClInclude Include="SELECT.h" />
     <ClInclude Include="STAGE2_MAP.h" />
+    <ClInclude Include="STAGE3_MAP.h" />
     <ClInclude Include="TITLE.h" />
   </ItemGroup>
   <ItemGroup>
