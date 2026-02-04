@@ -22,7 +22,7 @@ namespace GAME04 {
             else
                 pr = 25;   // í èÌ
         }
-
+     
         void move(float px, float py);
         void draw();
         int changeTimer = 0;
