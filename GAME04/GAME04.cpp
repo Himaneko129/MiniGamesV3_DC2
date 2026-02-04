@@ -9,13 +9,8 @@
 #include <string>
 namespace GAME04
 {
-    std::string to_string(int value)
-    {
-        std::ostringstream oss;
-        oss << value;
-        return oss.str();
-    }
-    int timeFrame = 0;
+  
+   
     const float CLEAR_X = 3000;
     float scrollX = 0;
     int endStateTimer = 0;       // ゲーム終了状態表示用のタイマー
@@ -170,29 +165,9 @@ namespace GAME04
             state = GAME_CLEAR;
             endStateTimer = 0;
         }
-        if (player->wx >= CLEAR_X)
-        {
-            state = GAME_CLEAR;
-            endStateTimer = 0;
-        }
       
-        else if (state == GAME_CLEAR)
-        {
-           
-            text("Zでタイトルへ戻る", 470, 650);
-            text("ENTERでメニューに戻る", 430, 720);
-
-            if (isTrigger(KEY_Z))
-            {
-                destroy();
-                state = TITLE;
-            }
-            if (isTrigger(KEY_ENTER))
-            {
-                destroy();
-                main()->backToMenu();
-            }
-        }
+      
+      
     }
     void GAME::drawClearBackground()
     {
@@ -272,7 +247,7 @@ namespace GAME04
             state = PLAY;
             scrollX = 0;
             timer = 0;
-            timeFrame = 0;
+           
             create();
         }
        
@@ -318,11 +293,12 @@ namespace GAME04
 
             }
             break;
-
         case GAME_OVER:
             textSize(80);
-            fill(255, 0, 0);
-            text("GAME OVER", 500, 500);
+            fill(255);
+            text("昇天した", 500, 500);
+            text("SCORE:", 500, 600);
+            text(player->score, 750, 600);
             textSize(40);
             fill(255);
             text("Zでタイトルへ戻る　ENTERでメニューに戻る", 500, 700);
@@ -342,8 +318,10 @@ namespace GAME04
            
            
             textSize(80);
-            fill(0, 255, 0);
-            text("YOU WIN!", 500, 500);
+            fill(255);
+            text("GAME CLEAR!", 500, 500);
+            text("SCORE:", 500, 600);
+            text(player->score, 750, 600);
             textSize(40);
             fill(255);
             text("Zでタイトルへ戻る　ENTERでメニューに戻る", 500, 700);
