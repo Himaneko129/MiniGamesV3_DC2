@@ -302,27 +302,27 @@ namespace GAME02{
 			}
 			//フォーダイス
 			if (isfour == 1) {
-				text("フォーダイス！",1000,200);
+				text("フォーダイス！",1050,200);
 				diceKARI[7] = 25;
 			}
 			//フルハウス
 			if (is3 == 1 && is2 == 1) {
-				text("フルハウス！", 1000, 200);
+				text("フルハウス！", 1050, 200);
 				diceKARI[8] = (w3 * 3) + (w2 * 2);
 			}
 			//Sストレート
 			if (isss == 1 &&isbs != 1) {
-				text("Sストレート！", 1000, 200);
+				text("Sストレート！", 1050, 200);
 				diceKARI[9] = 15;
 			}
 			//Bストレート
 			if (isbs == 1) {
-				text("Bストレート！", 1000, 200);
+				text("Bストレート！", 1050, 200);
 				diceKARI[10] = 30;
 			}
 			//ヨット
 			if (isyot == 1) {
-				text("ヨット！！！", 1000, 200);
+				text("ヨット！！！", 1050, 200);
 				diceKARI[11] = 50;
 			}
 		}
@@ -940,62 +940,62 @@ namespace GAME02{
 			if (mouseX > 147 && mouseX < 294){
 				text("エース",0,400);
 				text("1のサイコロの出目の数", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[0], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[0], 130, 520);
 			
 			}
 			if (mouseX > 294 && mouseX < 441) {
 				text("デュース", 0, 400);
 				text("2のサイコロの出目の数", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[1], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[1], 130, 520);
 				
 			}
 			if (mouseX > 441 && mouseX < 588) {
 				text("トレイ", 0, 400);
 				text("3のサイコロの出目の数", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[2], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[2], 130, 520);
 				
 			}
 			if (mouseX > 588 && mouseX < 735) {
 				text("フォー", 0, 400);
 				text("4のサイコロの出目の数", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[3], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[3], 130, 520);
 				
 			}
 			if (mouseX > 735 && mouseX < 882) {
 				text("ファイブ", 0, 400);
 				text("5のサイコロの出目の数", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[4], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[4], 130, 520);
 				
 			}
 			if (mouseX > 882 && mouseX < 1029) {
 				text("シックス", 0, 400);
 				text("6のサイコロの出目の数", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[5], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[5], 130, 520);
 				
 			}
 			if (mouseX > 1029 && mouseX < 1176) {
 				text("チョイス", 0, 400);
 				text("全てのサイコロを足した数", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[6], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[6], 130, 520);
 			}
 			if (mouseX > 1176 && mouseX < 1323) {
 				text("フォーダイス", 0, 400);
 				text("4つ同じサイコロが揃った役", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[7], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[7], 130, 520);
 			}
 			if (mouseX > 1323 && mouseX < 1470) {
 				text("フルハウス", 0, 400);
 				text("3つと2つのサイコロの役", 0, 460);
-				text("今の点数:", 0, 520);
-				text(diceKARI[8], 200, 520);
+				text("点数:", 0, 520);
+				text(diceKARI[8], 130, 520);
 			}
 			if (mouseX > 1470 && mouseX < 1617) {
 				text("Sストレート", 0, 400);
@@ -1020,10 +1020,10 @@ namespace GAME02{
 			}
 			if (mouseY <= 200 && mouseY > 100) {
 				text("プレイヤーごとの小計", 0, 400);
-				text("小計が65点を超えると？...", 0, 460);
+				text("小計が65を超えると+35", 0, 460);
 			}
 		}
-	}	 
+	}
 	void GAME::proc() {
 		clear(0,80,0);
 		stroke(255);
@@ -1041,7 +1041,7 @@ namespace GAME02{
 		//ゲームの説明を入力する
 		if (isTrigger(KEY_LEFT) && gameselect == 0) { gameselect = 1; }
 		if (isTrigger(KEY_RIGHT) && gameselect == 0) { gameselect = 2; }
-		//ゲーム１
+		//ゲーム１ ブラックジャック
 		if (gameselect == 1) {
 			if (gamest == 0) {
 				//タイトル
@@ -1200,7 +1200,7 @@ namespace GAME02{
 				}
 			}
 		}
-		//ゲーム２
+		//ゲーム２　ヨット
 		if (gameselect == 2) {
 			if (gamest == 0) {
 				//タイトル
@@ -1218,7 +1218,7 @@ namespace GAME02{
 				UI();
 				help();
 				//サイコロを振る回数表示
-				if (pull == 0 && tarn <= 24) {
+				if (pull == 0 && tarn < 24) {
 					textSize(40);
 					text("ENTERキーでサイコロを止める", 600, 45);
 					textSize(60);
@@ -1245,14 +1245,15 @@ namespace GAME02{
 				}
 				//12回ずつ行動したあと勝利者発表
 				if (tarn == 24){
+					textSize(100);
 					if (sumMEall > sumME2all) {
-						text("1Pの勝利！", 1100, 350);
+						text("1Pの勝利！", 1080, 320);
 					}
 					if (sumMEall < sumME2all) {
-						text("2Pの勝利！", 1100, 350);
+						text("2Pの勝利！", 1080, 320);
 					}
 					if (sumMEall == sumME2all) {
-						text("DRAW", 1100, 350);
+						text("DRAW", 1100, 320);
 					}
 				}
 			}
