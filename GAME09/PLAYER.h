@@ -11,6 +11,8 @@ class PLAYER {
     bool rapidFire = false;
     int rapidFireTimer = 0;
     int shotCooldown = 0;
+    int speedTimer = 0;
+    float moveSpeed = 10.0f;
 
 public:
     void load();
@@ -22,7 +24,5 @@ public:
 
     void activateRapidFire(int duration);
 
-    float moveSpeed = 10.0f;
-    int speedTimer = 0;
     void activateSpeedBoost(int duration);
 };

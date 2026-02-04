@@ -3,7 +3,7 @@
 #include "PLAYER.h"
 #include "INVADER_MANAGER.h"
 #include "BARRIER_MANAGER.h"
-
+#include <vector>
 namespace GAME09
 {
     class GAME : public GAME_BASE
@@ -16,13 +16,16 @@ namespace GAME09
         void destroy();
         void resetGame();
         void updateHighScore();
+        void loadRanking();
+        void saveRanking();
 
         bool gameOver = false;
         bool gameClear = false;
         bool saved = false; 
         bool phaseChanging = false;
         bool bgmPlaying = false;
-
+        bool showRanking = false;
+        bool titleBgmPlaying = false;
 
         int score = 0;
         int highScore = 0;
@@ -32,10 +35,14 @@ namespace GAME09
         int bgm;
         int bgmTimer = 0;
         int clearBonus = 0;
+        int titleBgm;
+        int titleBgmTimer = 0;
 
-        float playTime = 0.0f;
+       float playTime = 0.0f;
 
         const int BGM_LENGTH = 60 * 98;
+        const int TITLE_BGM_LENGTH = 60 * 108;
+        std::vector<int> scoreHistory;
 
         PLAYER player;
         INVADER_MANAGER invaderManager;
