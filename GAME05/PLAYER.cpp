@@ -65,7 +65,7 @@ namespace GAME05 {
 			Player_Y += 2;
 		}
 
-		Player_X -= 2;
+		Player_X -= 3;
 	}
 	void PLAYER::Player_SELECT_MOVE() {
 		Last_Player_X = Player_X;

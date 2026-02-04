@@ -49,6 +49,7 @@ namespace GAME14
 			if (game_scene->game_state == game_scene->INIT) {
 				input->INIT();
 				hiragana->TITLE_INIT();
+				hiragana->IMAGE_SET_INIT();
 				game_scene->game_state = game_scene->TITLE;
 			}
 			else if (game_scene->game_state == game_scene->TITLE) {
@@ -61,6 +62,21 @@ namespace GAME14
 				}
 			}
 			else if (game_scene->game_state == game_scene->OPTION) {
+				hiragana->Image_How_To_Play();
+				textSize(100);
+				fill(0);
+				text("A：セレクト画面へ", 5, Tate+5);
+				fill(255);
+				if (isTrigger(KEY_A)) {
+					game_scene->game_state = game_scene->SELECT;
+				}
+				if (mouseX < 850 && mouseY>(Tate - 100)) {
+					fill(255, 255, 0);
+					if (isTrigger(MOUSE_LBUTTON)) {
+						game_scene->game_state = game_scene->SELECT;
+					}
+				}
+				text("A：セレクト画面へ", 0, Tate);
 			}
 			/*
 			else if (game_scene->game_state == game_scene->SELECT) {
@@ -88,6 +104,7 @@ namespace GAME14
 			}
 			*/
 			else if (game_scene->game_state == game_scene->SELECT) {
+				//hiragana->How_To_Play();
 				int result = input->SELECT_MOUSE_INPUT(mouseX, mouseY);  // ← ここで一度だけ呼ぶ！
 				if (input->BACK_SCENE(mouseX, mouseY) == true) {
 					game_scene->game_state = game_scene->TITLE;
@@ -112,7 +129,9 @@ namespace GAME14
 					game_scene->now_stage = game_scene->stage5;
 					game_scene->game_state = game_scene->PLAY;
 				}
-
+				if (isTrigger(KEY_A)||hiragana->How_To_Play()) {
+					game_scene->game_state = game_scene->OPTION;
+				}
 				input->DRAW_SELECT(mouseX, mouseY);
 			}
 			else if (game_scene->game_state == game_scene->PLAY) {
@@ -129,6 +148,7 @@ namespace GAME14
 						input->KEYBOARD(mouseX, mouseY);
 						input->SHOW_INPUT();
 						hiragana->STAGE1_DRAW();
+						hiragana->STAGE1_HINT();
 						hiragana->STAGE1_INPUT(input->Sent_text());
 						if (hiragana->GOTO_SELECT_STAGE() == true) {
 							game_scene->game_state = game_scene->SELECT;
@@ -153,6 +173,7 @@ namespace GAME14
 						input->KEYBOARD(mouseX, mouseY);
 						input->SHOW_INPUT();
 						hiragana->STAGE2_DRAW();
+						hiragana->STAGE2_HINT();
 						hiragana->STAGE2_INPUT(input->Sent_text());
 						if (hiragana->GOTO_SELECT_STAGE() == true) {
 							game_scene->game_state = game_scene->SELECT;
@@ -177,6 +198,7 @@ namespace GAME14
 						input->KEYBOARD(mouseX, mouseY);
 						input->SHOW_INPUT();
 						hiragana->STAGE3_DRAW();
+						hiragana->STAGE3_HINT();
 						hiragana->STAGE3_INPUT(input->Sent_text());
 						if (hiragana->GOTO_SELECT_STAGE() == true) {
 							game_scene->game_state = game_scene->SELECT;
@@ -201,6 +223,7 @@ namespace GAME14
 						input->KEYBOARD(mouseX, mouseY);
 						input->SHOW_INPUT();
 						hiragana->STAGE4_DRAW();
+						hiragana->STAGE4_HINT();
 						hiragana->STAGE4_INPUT(input->Sent_text());
 						if (hiragana->GOTO_SELECT_STAGE() == true) {
 							game_scene->game_state = game_scene->SELECT;
@@ -267,9 +290,10 @@ namespace GAME14
 			}
 			else if (game_scene->game_state == game_scene->PLAY) {
 				exploit->Setup_Cell_color();
+				exploit->RULE_IMAGE();
 				exploit->Draw_Board();
 				exploit->DRAW_Game_Finish();
-				exploit->DEBUG_DRAW();
+				//exploit->DEBUG_DRAW();
 				if (exploit->CHANGE_Turn()) {
 					if (isTrigger(MOUSE_LBUTTON)) {
 						int r, c;

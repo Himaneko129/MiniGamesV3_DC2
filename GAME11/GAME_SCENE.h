@@ -4,7 +4,7 @@ namespace GAME11 {
 	class GAME_SCENE {
 	public:
 		const enum scene {
-			INIT, TITLE, OPTION, SELECT, PLAY
+			INIT, TITLE, OPTION, SELECT, PLAY,GAMEOVER
 		};
 		int game_state = 0;
 	};

@@ -6,6 +6,7 @@ namespace GAME11 {
 	};
 	class SELECT {
 		int select_return = 0;
+		bool how_to_flag = 0;
 	public:
 		void SELECT_DRAW(int num);
 		int SELECT_CHARA();
@@ -14,5 +15,6 @@ namespace GAME11 {
 		void GET_SELECT_NUM(int num);
 		int OUT_SELECT_NUM();
 		bool Go_to_PLAY();
+		void HOW_TO_PLAY();
 	};
 }
