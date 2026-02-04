@@ -14,7 +14,7 @@ namespace GAME05 {
 	public:
 		void setImage(int Img);
 		void Player_INIT();
-		void Player_MOVE();
+		void Player_MOVE(int num);
 		void Player_DRAW();
 		void Player_SELECT_MOVE();
 		void Player_position_reset();
