@@ -19,6 +19,7 @@ namespace GAME01
         void draw();
         MATH* math();
         KANJI* kanji();
+        bool scene1;
     };
 }
 
