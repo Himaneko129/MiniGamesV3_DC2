@@ -111,6 +111,7 @@ namespace GAME07
 	}
 	void GAME::Init() {
 		clear(0, 100, 0);
+		
 		firstCardIdx = -1;    
 		secondCardIdx = -1;   
 		waitTimer = 0;
@@ -201,6 +202,7 @@ namespace GAME07
 		else {
 			text("FIELD: NORMAL", 10, 50);
 		}
+		
 
 		std::string s = "PLAYER: " + std::to_string(score_player) + "  CPU: " + std::to_string(score_cpu);
 		text(s.c_str(), 1400, 50);
@@ -245,11 +247,12 @@ namespace GAME07
 
 	}
 	void GAME::Player() {
+		text("PLAYER TURN", 10, 100);
 		if (isTrigger(MOUSE_LBUTTON)) {
 			for (int i = 0; i < TOTAL_CARDS; i++) {
 				if (board[i].state == STATE_HIDDEN) {
-					if (mouseX >= board[i].x && mouseX <= board[i].x + 100 &&
-						mouseY >= board[i].y && mouseY <= board[i].y + 150) {
+					if (mouseX >= board[i].x-50 && mouseX <= board[i].x +50 &&
+						mouseY >= board[i].y-75 && mouseY <= board[i].y + 75) {
 
 						board[i].state = STATE_REVEALED; 
 						playSound(tarotSnd);
@@ -267,12 +270,18 @@ namespace GAME07
 				}
 			}
 		}
+		text("Enter‚Åƒƒjƒ…[‚Ö", 0, height);
+		if (isTrigger(KEY_ENTER)) {
+			main()->backToMenu();
+		}
+		
 	}
 	void GAME::Enemy(){
+		text("ENEMY TURN", 10, 100);
 		waitTimer++;
 
 		if (firstCardIdx == -1) {
-			if (waitTimer < 180) return; 
+			if (waitTimer < 60) return; 
 
 			int first = -1;
 
@@ -349,10 +358,17 @@ namespace GAME07
 			State = JUDGE_ENEMY;
 			waitTimer = 0;
 		}
+		
 	}
 	void GAME::Judge() {
+		if (State == JUDGE) {
+			text("PLAYER TURN", 10, 100);
+		}
+		if (State == JUDGE_ENEMY) {
+			text("ENEMY TURN", 10, 100);
+		}
 		waitTimer++;
-		if (waitTimer < 300) return;
+		if (waitTimer < 60) return;
 
 		if (board[firstCardIdx].id == board[secondCardIdx].id) {
 			Position p1 = board[firstCardIdx].position;
