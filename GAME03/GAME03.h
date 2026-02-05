@@ -2,6 +2,7 @@
 #include <vector>
 #include "../MAIN/GAME_BASE.h"
 #include "MiniTemplate.h"
+#include <Windows.h>
 
 namespace GAME03 {
 
@@ -12,88 +13,104 @@ namespace GAME03 {
         int  create()  override;
         void proc()    override;
         void destroy() override;
-        int playerX, playerY;
+
         enum DIFFICULTY { EASY, NORMAL, HARD };
+
     private:
-        MiniTemplate pickStartTemplate();
+        // =============================
+        // 基本定数
+        // =============================
         static const int SIZE = 9;
         static const int EMPTY = 0;
-        static const int BLOCK = 2;
+        static const int BLOCK = 1;
 
-        bool canConnect(const MiniTemplate& A,
-            const MiniTemplate& B,
-            DIR dir);
+        // =============================
+        // 盤面
+        // =============================
+        int undoLeft = 0;
 
-        void buildEntryExit(MiniTemplate& t);
-        DIR arrow[SIZE][SIZE];
+        int getUndoLimit() const {
+            if (selectedDifficulty == EASY)   return 9999; // 実質無制限
+            if (selectedDifficulty == NORMAL) return 15;
+            return 5; // HARD
+        }
 
-
-        bool showRoute = false;
-        bool canExitRight(const MiniTemplate& t);
-        bool canExitLeft(const MiniTemplate& t);
-        bool canExitUp(const MiniTemplate& t);
-        bool canExitDown(const MiniTemplate& t);
-
-        std::vector<MiniTemplate> miniTemplates;
-        void init(DIFFICULTY diff);
-        void drawMiniTemplateDebug(const MiniTemplate& t, int ox, int oy);
-
-
-        void buildArrowFromPath(MiniTemplate& t);
-
-
-        enum STATE { TITLE, PLAY, CLEAR };
-
-        STATE State = TITLE;
-        bool  playInitFlg = false;
-        bool  prevEnterKey = false;
-        bool showClearRoute = false;
-
-        int clearRouteLength;
-        int getTargetBlockCount() const;
-        void clearMap();
-        void adjustBlockCount();
-        int countEmptyCells() const;
-
-        int selectedDifficulty;
-        int numBlocks = 0;
-        int titleBgm = -1;
-        int playBgm = -1;
-        int clearBgm = -1;
         int  board[SIZE][SIZE];
         bool visited[SIZE][SIZE];
-        int  px = 0, py = 0;
+        DIR  arrow[SIZE][SIZE];
+        DIR getTemplateDirection(int a, int b);
+        int px = 0;
+        int py = 0;
+        int startPX = 0;
+        int startPY = 0;
 
-        int  visitCount = 0;
-        int  totalEmpty = SIZE * SIZE;
+        int visitCount = 0;
+        int totalEmpty = 0;
         bool gameClear = false;
+        bool debugGenFailed = false;
 
-        std::vector<std::pair<int, int>> correctPath;
-        bool used[SIZE][SIZE];
+        // =============================
+        // 状態管理
+        // =============================
+        enum STATE { TITLE, PLAY, CLEAR };
+        STATE State = TITLE;
 
-        // 正解ルート用矢印生成
-        bool dfsPath(int x, int y, int target);
-        void buildArrowFromCorrectPath();
-        std::vector<std::pair<int, int>> path;
+        bool playInitFlg = false;
+        bool prevEnterKey = false;
+        bool showClearRoute = false;
+
+        int selectedDifficulty = EASY;
+        int countBlocks9x9() const;
+        void makeSnakePath9x9(std::vector<std::pair<int, int>>& out);
+        int getTargetBlocks() const;
+
+        // =============================
+        // テンプレート処理（★核）
+        // =============================
+        void decideTemplates(MiniTemplate placed[9]);
+        bool canConnect(
+            const MiniTemplate& from,
+            const MiniTemplate& to,
+            DIR dir
+        );
+        void applyMainPathToBoard();
+        void createTemplateSnakePath();
+        void build9x9FromTemplates(const MiniTemplate placed[9]);
+        void createMainPath9x9FromTemplates(const MiniTemplate placed[9]);
+        void setStartFromTemplate(const MiniTemplate placed[9]);
+        //     void buildMainPath9x9FromTemplates(MiniTemplate placed[9]);
+        bool buildMainPath9x9FromTemplates(MiniTemplate placed[9]);
+
+        // =============================
+        // 正解ルート
+        // =============================
+        std::vector<std::pair<int, int>> templateRoute; // (tx, ty)
+
+        std::vector<std::pair<int, int>> mainPath9x9;
         std::vector<std::pair<int, int>> moveHistory;
-        std::vector<std::pair<int, int>> shortestPath;
-        std::vector<std::pair<int, int>> highlightPath;
 
+        // =============================
+        // 共通処理
+        // =============================
+        bool showRoute = false;
+        void buildArrowFromMainPath9x9();
 
-        void aaaa();
-        // 各処理関数
+        void clearMap();
         void resetVisited();
+        int  countEmptyCells() const;
         void generateMap();
         void drawBoard();
         void handleInput();
         void restartPlay();
         void buildArrowPath();
 
-        void createFullSnakePath();
-        void createSolvableMap(int difficulty);
-        void loadPredefinedMap(int difficulty, int index);
-        void drawCenteredText(const char* str, int centerX, int y, int size = 24);
+        // UI
+        void drawCenteredText(
+            const char* str,
+            int centerX,
+            int y,
+            int size = 24
+        );
     };
 
 } // namespace GAME03
-

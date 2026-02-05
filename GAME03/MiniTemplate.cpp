@@ -1,674 +1,501 @@
 #include "MiniTemplate.h"
-static const std::vector<MiniTemplate> g_miniTemplates = {
-    {
-        {
-            {0,0,0},
-            {0,0,0},
-            {0,0,0}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {true,false,true}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {true,false,true}
-        }
-    },
-    {
-        {
-            {1,0,0},
-            {0,0,0},
-            {0,0,0}
-        },
-        {
-            {false,true,true},
-            {true,false,true},
-            {true,true,true}
-        },
-        {
-            {false,true,true},
-            {true,false,true},
-            {true,true,true}
-        }
-    },
-    {
-        {
-            {0,0,1},
-            {0,0,0},
-            {0,0,0}
-        },
-        {
-            {true,true,false},
-            {true,false,true},
-            {true,true,true}
-        },
-        {
-            {true,true,false},
-            {true,false,true},
-            {true,true,true}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,0,0},
-            {1,0,0}
-        },
-        {
-            {true,true,true},
-            {true,false,true},
-            {false,true,true}
-        },
-        {
-            {true,true,true},
-            {true,false,true},
-            {false,true,true}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,0,0},
-            {0,0,1}
-        },
-        {
-            {true,true,true},
-            {true,false,true},
-            {true,true,false}
-        },
-        {
-            {true,true,true},
-            {true,false,true},
-            {true,true,false}
-        }
-    },
-    {
-        {
-            {1,1,0},
-            {0,0,0},
-            {0,0,0}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {true,false,true}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {true,false,true}
-        }
-    },
-    {
-        {
-            {1,0,1},
-            {0,0,0},
-            {0,0,0}
-        },
-        {
-            {false,true,false},
-            {true,false,true},
-            {false,false,false}
-        },
-        {
-            {false,true,false},
-            {true,false,true},
-            {false,false,false}
-        }
-    },
-    {
-        {
-            {1,0,0},
-            {1,0,0},
-            {0,0,0}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {true,false,true}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {true,false,true}
-        }
-    },
-    {
-        {
-            {1,0,0},
-            {0,1,0},
-            {0,0,0}
-        },
-        {
-            {false,true,false},
-            {true,false,false},
-            {false,false,false}
-        },
-        {
-            {false,true,false},
-            {true,false,false},
-            {false,false,false}
-        }
-    },
-    {
-        {
-            {1,0,0},
-            {0,0,1},
-            {0,0,0}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {false,false,true}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {false,false,true}
-        }
-    },
-    {
-        {
-            {1,0,0},
-            {0,0,0},
-            {1,0,0}
-        },
-        {
-            {false,true,false},
-            {true,false,false},
-            {false,true,false}
-        },
-        {
-            {false,true,false},
-            {true,false,false},
-            {false,true,false}
-        }
-    },
-    {
-        {
-            {1,0,0},
-            {0,0,0},
-            {0,1,0}
-        },
-        {
-            {false,false,false},
-            {false,false,false},
-            {true,false,true}
-        },
-        {
-            {false,false,false},
-            {false,false,false},
-            {true,false,true}
-        }
-    },
-    {
-        {
-            {1,0,0},
-            {0,0,0},
-            {0,0,1}
-        },
-        {
-            {false,true,false},
-            {true,false,true},
-            {false,true,false}
-        },
-        {
-            {false,true,false},
-            {true,false,true},
-            {false,true,false}
-        }
-    },
-    {
-        {
-            {0,1,1},
-            {0,0,0},
-            {0,0,0}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,true}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,true}
-        }
-    },
-    {
-        {
-            {0,1,0},
-            {0,1,0},
-            {0,0,0}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,false}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,false}
-        }
-    },
-    {
-        {
-            {0,1,0},
-            {0,0,0},
-            {1,0,0}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,false}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,false}
-        }
-    },
-    {
-        {
-            {0,1,0},
-            {0,0,0},
-            {0,0,1}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,false}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,false}
-        }
-    },
-    {
-        {
-            {0,0,1},
-            {1,0,0},
-            {0,0,0}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,false}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,false}
-        }
-    },
-    {
-        {
-            {0,0,1},
-            {0,1,0},
-            {0,0,0}
-        },
-        {
-            {false,true,false},
-            {false,false,true},
-            {false,false,false}
-        },
-        {
-            {false,true,false},
-            {false,false,true},
-            {false,false,false}
-        }
-    },
-    {
-        {
-            {0,0,1},
-            {0,0,1},
-            {0,0,0}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,true}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,true}
-        }
-    },
-    {
-        {
-            {0,0,1},
-            {0,0,0},
-            {1,0,0}
-        },
-        {
-            {false,true,false},
-            {true,false,true},
-            {false,true,false}
-        },
-        {
-            {false,true,false},
-            {true,false,true},
-            {false,true,false}
-        }
-    },
-    {
-        {
-            {0,0,1},
-            {0,0,0},
-            {0,1,0}
-        },
-        {
-            {false,false,false},
-            {false,false,false},
-            {true,false,true}
-        },
-        {
-            {false,false,false},
-            {false,false,false},
-            {true,false,true}
-        }
-    },
-    {
-        {
-            {0,0,1},
-            {0,0,0},
-            {0,0,1}
-        },
-        {
-            {false,true,false},
-            {false,false,true},
-            {false,true,false}
-        },
-        {
-            {false,true,false},
-            {false,false,true},
-            {false,true,false}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {1,1,0},
-            {0,0,0}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,false}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,false}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {1,0,0},
-            {1,0,0}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,true}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,true}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {1,0,0},
-            {0,0,1}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,false}
-        },
-        {
-            {true,false,false},
-            {false,false,false},
-            {true,false,false}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,1,1},
-            {0,0,0}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {false,false,true}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {false,false,true}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,1,0},
-            {1,0,0}
-        },
-        {
-            {false,false,false},
-            {true,false,false},
-            {false,true,false}
-        },
-        {
-            {false,false,false},
-            {true,false,false},
-            {false,true,false}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,1,0},
-            {0,1,0}
-        },
-        {
-            {false,false,false},
-            {false,false,false},
-            {true,false,true}
-        },
-        {
-            {false,false,false},
-            {false,false,false},
-            {true,false,true}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,1,0},
-            {0,0,1}
-        },
-        {
-            {false,false,false},
-            {false,false,true},
-            {false,true,false}
-        },
-        {
-            {false,false,false},
-            {false,false,true},
-            {false,true,false}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,0,1},
-            {1,0,0}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {false,false,true}
-        },
-        {
-            {false,false,true},
-            {false,false,false},
-            {false,false,true}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,0,1},
-            {0,0,1}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {true,false,false}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {true,false,false}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,0,0},
-            {1,1,0}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,true}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {false,false,true}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,0,0},
-            {1,0,1}
-        },
-        {
-            {false,false,false},
-            {true,false,true},
-            {false,true,false}
-        },
-        {
-            {false,false,false},
-            {true,false,true},
-            {false,true,false}
-        }
-    },
-    {
-        {
-            {0,0,0},
-            {0,0,0},
-            {0,1,1}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {true,false,false}
-        },
-        {
-            {true,false,true},
-            {false,false,false},
-            {true,false,false}
-        }
-    }
-};
+#include <vector>
 
-void buildArrowFromPath(MiniTemplate& t)
+// 3x3 の “形” テンプレをここで定義する（cellだけ）
+static std::vector<MiniTemplate> makeAllTemplates()
 {
-    for (int y = 0; y < 3; y++)
-        for (int x = 0; x < 3; x++)
-            t.arrow[y][x] = NONE;
+    std::vector<MiniTemplate> tmp;
 
-    for (size_t i = 0; i + 1 < t.mainPath.size(); i++)
-    {
-        int x1 = t.mainPath[i].first;
-        int y1 = t.mainPath[i].second;
-        int x2 = t.mainPath[i + 1].first;
-        int y2 = t.mainPath[i + 1].second;
+    // パターン0: 全て移動可能 - バリエーション1
+    MiniTemplate t0;
+    t0.cell = { {{0,0,0},{0,0,0},{0,0,0}} };
+    t0.mainPath = { {0,0},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,1} };
+    tmp.push_back(t0);
 
-        if (x2 == x1 + 1) t.arrow[y1][x1] = RIGHT;
-        else if (x2 == x1 - 1) t.arrow[y1][x1] = LEFT;
-        else if (y2 == y1 + 1) t.arrow[y1][x1] = DOWN;
-        else if (y2 == y1 - 1) t.arrow[y1][x1] = UP;
-    }
-}
+    // パターン1: 全て移動可能 - バリエーション2
+    MiniTemplate t1;
+    t1.cell = { {{0,0,0},{0,0,0},{0,0,0}} };
+    t1.mainPath = { {0,2},{1,2},{2,2},{2,1},{2,0},{1,0},{0,0},{0,1} };
+    tmp.push_back(t1);
 
+    // パターン2: 全て移動可能 - バリエーション3
+    MiniTemplate t2;
+    t2.cell = { {{0,0,0},{0,0,0},{0,0,0}} };
+    t2.mainPath = { {2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{0,0},{1,0} };
+    tmp.push_back(t2);
 
-std::vector<std::pair<int, int>>
-rotatePath90(const std::vector<std::pair<int, int>>& src)
-{
-    std::vector<std::pair<int, int>> dst;
-    for (const auto& p : src)
-    {
-        int x = p.first;
-        int y = p.second;
-        dst.emplace_back(2 - y, x);
-    }
-    return dst;
-}
+    // パターン3: 全て移動可能 - バリエーション4
+    MiniTemplate t3;
+    t3.cell = { {{0,0,0},{0,0,0},{0,0,0}} };
+    t3.mainPath = { {2,2},{2,1},{2,0},{1,0},{0,0},{0,1},{0,2},{1,2} };
+    tmp.push_back(t3);
 
+    // パターン4: 左上にブロック - バリエーション1
+    MiniTemplate t4;
+    t4.cell = { {{1,0,0},{0,0,0},{0,0,0}} };
+    t4.mainPath = { {0,1},{1,1},{2,1},{2,0},{2,2},{1,2},{0,2},{1,0} };
+    tmp.push_back(t4);
 
+    // パターン5: 左上にブロック - バリエーション2
+    MiniTemplate t5;
+    t5.cell = { {{1,0,0},{0,0,0},{0,0,0}} };
+    t5.mainPath = { {0,2},{0,1},{1,1},{2,1},{2,0},{2,2},{1,2},{1,0} };
+    tmp.push_back(t5);
 
+    // パターン6: 左上にブロック - バリエーション3
+    MiniTemplate t6;
+    t6.cell = { {{1,0,0},{0,0,0},{0,0,0}} };
+    t6.mainPath = { {2,0},{2,1},{1,1},{0,1},{0,2},{1,2},{2,2},{1,0} };
+    tmp.push_back(t6);
 
-MiniTemplate rotate270(const MiniTemplate& t)
-{
-    return rotate90(rotate180(t));
-}
+    // パターン7: 右上にブロック - バリエーション1
+    MiniTemplate t7;
+    t7.cell = { {{0,0,1},{0,0,0},{0,0,0}} };
+    t7.mainPath = { {0,0},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,1} };
+    tmp.push_back(t7);
+
+    // パターン8: 右上にブロック - バリエーション2
+    MiniTemplate t8;
+    t8.cell = { {{0,0,1},{0,0,0},{0,0,0}} };
+    t8.mainPath = { {0,1},{0,0},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2} };
+    tmp.push_back(t8);
+
+    // パターン9: 右上にブロック - バリエーション3
+    MiniTemplate t9;
+    t9.cell = { {{0,0,1},{0,0,0},{0,0,0}} };
+    t9.mainPath = { {2,2},{2,1},{2,0},{1,0},{0,0},{0,1},{0,2},{1,2} };
+    tmp.push_back(t9);
+
+    // パターン10: 左下にブロック - バリエーション1
+    MiniTemplate t10;
+    t10.cell = { {{0,0,0},{0,0,0},{1,0,0}} };
+    t10.mainPath = { {0,0},{0,1},{0,2},{1,2},{2,2},{2,1},{2,0},{1,0} };
+    tmp.push_back(t10);
+
+    // パターン11: 左下にブロック - バリエーション2
+    MiniTemplate t11;
+    t11.cell = { {{0,0,0},{0,0,0},{1,0,0}} };
+    t11.mainPath = { {0,2},{0,1},{0,0},{1,0},{2,0},{2,1},{2,2},{1,2} };
+    tmp.push_back(t11);
+
+    // パターン12: 左下にブロック - バリエーション3
+    MiniTemplate t12;
+    t12.cell = { {{0,0,0},{0,0,0},{1,0,0}} };
+    t12.mainPath = { {1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{0,0} };
+    tmp.push_back(t12);
+
+    // パターン13: 右下にブロック - バリエーション1
+    MiniTemplate t13;
+    t13.cell = { {{0,0,0},{0,0,0},{0,0,1}} };
+    t13.mainPath = { {0,0},{0,1},{0,2},{1,2},{2,2},{2,1},{2,0},{1,0} };
+    tmp.push_back(t13);
+
+    // パターン14: 右下にブロック - バリエーション2
+    MiniTemplate t14;
+    t14.cell = { {{0,0,0},{0,0,0},{0,0,1}} };
+    t14.mainPath = { {0,2},{0,1},{0,0},{1,0},{2,0},{2,1},{1,2},{1,1} };
+    tmp.push_back(t14);
+
+    // パターン15: 右下にブロック - バリエーション3
+    MiniTemplate t15;
+    t15.cell = { {{0,0,0},{0,0,0},{0,0,1}} };
+    t15.mainPath = { {2,0},{2,1},{1,2},{0,2},{0,1},{0,0},{1,0} };
+    tmp.push_back(t15);
+
+    // パターン16: 左上2つブロック - バリエーション1
+    MiniTemplate t16;
+    t16.cell = { {{1,1,0},{0,0,0},{0,0,0}} };
+    t16.mainPath = { {0,2},{1,2},{2,2},{2,1},{2,0},{1,0},{1,1},{0,0} };
+    tmp.push_back(t16);
+
+    // パターン17: 左上2つブロック - バリエーション2
+    MiniTemplate t17;
+    t17.cell = { {{1,1,0},{0,0,0},{0,0,0}} };
+    t17.mainPath = { {2,0},{1,0},{1,1},{0,0},{0,1},{0,2},{1,2},{2,2},{2,1} };
+    tmp.push_back(t17);
+
+    // パターン18: 左上と右上にブロック - バリエーション1
+    MiniTemplate t18;
+    t18.cell = { {{1,0,1},{0,0,0},{0,0,0}} };
+    t18.mainPath = { {0,1},{1,1},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2} };
+    tmp.push_back(t18);
+
+    // パターン19: 左上と右上にブロック - バリエーション2
+    MiniTemplate t19;
+    t19.cell = { {{1,0,1},{0,0,0},{0,0,0}} };
+    t19.mainPath = { {2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{1,1},{1,0} };
+    tmp.push_back(t19);
+
+    // パターン20: 左上と右上にブロック - バリエーション3
+    MiniTemplate t20;
+    t20.cell = { {{1,0,1},{0,0,0},{0,0,0}} };
+    t20.mainPath = { {2,2},{2,1},{2,0},{1,0},{1,1},{0,1},{0,2},{1,2} };
+    tmp.push_back(t20);
+
+    // パターン21: 左上縦2つブロック - バリエーション1
+    MiniTemplate t21;
+    t21.cell = { {{1,0,0},{1,0,0},{0,0,0}} };
+    t21.mainPath = { {0,2},{0,1},{1,1},{2,1},{2,0},{2,2},{1,2},{1,0} };
+    tmp.push_back(t21);
+
+    // パターン22: 左上縦2つブロック - バリエーション2
+    MiniTemplate t22;
+    t22.cell = { {{1,0,0},{1,0,0},{0,0,0}} };
+    t22.mainPath = { {1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{1,1} };
+    tmp.push_back(t22);
+
+    // パターン23: 左上と中央にブロック - バリエーション1
+    MiniTemplate t23;
+    t23.cell = { {{1,0,0},{0,1,0},{0,0,0}} };
+    t23.mainPath = { {0,1},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2} };
+    tmp.push_back(t23);
+
+    // パターン24: 左上と中央にブロック - バリエーション2
+    MiniTemplate t24;
+    t24.cell = { {{1,0,0},{0,1,0},{0,0,0}} };
+    t24.mainPath = { {2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{1,0} };
+    tmp.push_back(t24);
+
+    // パターン25: 左上と右中にブロック - バリエーション1
+    MiniTemplate t25;
+    t25.cell = { {{1,0,0},{0,0,1},{0,0,0}} };
+    t25.mainPath = { {0,2},{0,1},{1,1},{2,1},{2,0},{2,2},{1,2},{1,0} };
+    tmp.push_back(t25);
+
+    // パターン26: 左上と右中にブロック - バリエーション2
+    MiniTemplate t26;
+    t26.cell = { {{1,0,0},{0,0,1},{0,0,0}} };
+    t26.mainPath = { {1,0},{2,0},{2,1},{1,1},{0,1},{0,2},{1,2},{2,2} };
+    tmp.push_back(t26);
+
+    // パターン27: 左上と左下にブロック - バリエーション1
+    MiniTemplate t27;
+    t27.cell = { {{1,0,0},{0,0,0},{1,0,0}} };
+    t27.mainPath = { {0,1},{1,1},{1,0},{2,1},{2,0},{2,2},{1,2},{0,2} };
+    tmp.push_back(t27);
+
+    // パターン28: 左上と左下にブロック - バリエーション2
+    MiniTemplate t28;
+    t28.cell = { {{1,0,0},{0,0,0},{1,0,0}} };
+    t28.mainPath = { {0,2},{0,1},{1,1},{1,0},{2,0},{2,1},{2,2},{1,2} };
+    tmp.push_back(t28);
+
+    // パターン29: 左上と下中にブロック - バリエーション1
+    MiniTemplate t29;
+    t29.cell = { {{1,0,0},{0,0,0},{0,1,0}} };
+    t29.mainPath = { {0,1},{1,1},{1,0},{2,0},{2,2},{1,2},{0,2} };
+    tmp.push_back(t29);
+
+    // パターン30: 左上と下中にブロック - バリエーション2
+    MiniTemplate t30;
+    t30.cell = { {{1,0,0},{0,0,0},{0,1,0}} };
+    t30.mainPath = { {2,0},{1,0},{1,1},{0,1},{0,2},{1,2},{2,2} };
+    tmp.push_back(t30);
+
+    // パターン31: 左上と右下にブロック - バリエーション1
+    MiniTemplate t31;
+    t31.cell = { {{1,0,0},{0,0,0},{0,0,1}} };
+    t31.mainPath = { {0,1},{1,1},{1,0},{2,0},{2,1},{1,2},{0,2} };
+    tmp.push_back(t31);
+
+    // パターン32: 左上と右下にブロック - バリエーション2
+    MiniTemplate t32;
+    t32.cell = { {{1,0,0},{0,0,0},{0,0,1}} };
+    t32.mainPath = { {2,0},{2,1},{1,2},{0,2},{0,1},{1,1},{1,0} };
+    tmp.push_back(t32);
+
+    // パターン33: 上中と上右にブロック - バリエーション1
+    MiniTemplate t33;
+    t33.cell = { {{0,1,1},{0,0,0},{0,0,0}} };
+    t33.mainPath = { {0,0},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{1,1},{0,1} };
+    tmp.push_back(t33);
+
+    // パターン34: 上中と上右にブロック - バリエーション2
+    MiniTemplate t34;
+    t34.cell = { {{0,1,1},{0,0,0},{0,0,0}} };
+    t34.mainPath = { {2,2},{2,1},{2,0},{1,0},{0,0},{0,1},{1,1},{1,2},{0,2} };
+    tmp.push_back(t34);
+
+    // パターン35: 上中と中央にブロック - バリエーション1
+    MiniTemplate t35;
+    t35.cell = { {{0,1,0},{0,1,0},{0,0,0}} };
+    t35.mainPath = { {0,0},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,1} };
+    tmp.push_back(t35);
+
+    // パターン36: 上中と中央にブロック - バリエーション2
+    MiniTemplate t36;
+    t36.cell = { {{0,1,0},{0,1,0},{0,0,0}} };
+    t36.mainPath = { {2,2},{2,1},{2,0},{1,0},{0,0},{0,1},{0,2},{1,2} };
+    tmp.push_back(t36);
+
+    // パターン37: 上中と左下にブロック - バリエーション1
+    MiniTemplate t37;
+    t37.cell = { {{0,1,0},{0,0,0},{1,0,0}} };
+    t37.mainPath = { {0,0},{1,0},{1,1},{2,1},{2,0},{2,2},{1,2},{0,2} };
+    tmp.push_back(t37);
+
+    // パターン38: 上中と左下にブロック - バリエーション2
+    MiniTemplate t38;
+    t38.cell = { {{0,1,0},{0,0,0},{1,0,0}} };
+    t38.mainPath = { {1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,0},{1,1} };
+    tmp.push_back(t38);
+
+    // パターン39: 上中と右下にブロック - バリエーション1
+    MiniTemplate t39;
+    t39.cell = { {{0,1,0},{0,0,0},{0,0,1}} };
+    t39.mainPath = { {0,0},{1,0},{2,0},{2,1},{1,1},{0,1},{0,2},{1,2} };
+    tmp.push_back(t39);
+
+    // パターン40: 上中と右下にブロック - バリエーション2
+    MiniTemplate t40;
+    t40.cell = { {{0,1,0},{0,0,0},{0,0,1}} };
+    t40.mainPath = { {2,0},{2,1},{1,1},{1,0},{0,0},{0,1},{0,2},{1,2} };
+    tmp.push_back(t40);
+
+    // パターン41: 右上と左中にブロック - バリエーション1
+    MiniTemplate t41;
+    t41.cell = { {{0,0,1},{1,0,0},{0,0,0}} };
+    t41.mainPath = { {0,0},{0,1},{1,1},{2,1},{2,0},{2,2},{1,2},{0,2} };
+    tmp.push_back(t41);
+
+    // パターン42: 右上と左中にブロック - バリエーション2
+    MiniTemplate t42;
+    t42.cell = { {{0,0,1},{1,0,0},{0,0,0}} };
+    t42.mainPath = { {2,2},{2,1},{2,0},{1,1},{0,1},{0,0},{0,2},{1,2} };
+    tmp.push_back(t42);
+
+    // パターン43: 右上と中央にブロック - バリエーション1
+    MiniTemplate t43;
+    t43.cell = { {{0,0,1},{0,1,0},{0,0,0}} };
+    t43.mainPath = { {0,1},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,0} };
+    tmp.push_back(t43);
+
+    // パターン44: 右上と中央にブロック - バリエーション2
+    MiniTemplate t44;
+    t44.cell = { {{0,0,1},{0,1,0},{0,0,0}} };
+    t44.mainPath = { {2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{0,0},{1,0} };
+    tmp.push_back(t44);
+
+    // パターン45: 右上縦2つブロック - バリエーション1
+    MiniTemplate t45;
+    t45.cell = { {{0,0,1},{0,0,1},{0,0,0}} };
+    t45.mainPath = { {0,0},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,1} };
+    tmp.push_back(t45);
+
+    // パターン46: 右上縦2つブロック - バリエーション2
+    MiniTemplate t46;
+    t46.cell = { {{0,0,1},{0,0,1},{0,0,0}} };
+    t46.mainPath = { {2,2},{2,1},{2,0},{1,0},{0,0},{0,1},{0,2},{1,2} };
+    tmp.push_back(t46);
+
+    // パターン47: 右上と左下にブロック - バリエーション1
+    MiniTemplate t47;
+    t47.cell = { {{0,0,1},{0,0,0},{1,0,0}} };
+    t47.mainPath = { {0,1},{1,1},{1,0},{2,1},{2,0},{2,2},{1,2},{0,2},{0,0} };
+    tmp.push_back(t47);
+
+    // パターン48: 右上と左下にブロック - バリエーション2
+    MiniTemplate t48;
+    t48.cell = { {{0,0,1},{0,0,0},{1,0,0}} };
+    t48.mainPath = { {0,0},{0,1},{1,1},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2} };
+    tmp.push_back(t48);
+
+    // パターン49: 右上と下中にブロック - バリエーション1
+    MiniTemplate t49;
+    t49.cell = { {{0,0,1},{0,0,0},{0,1,0}} };
+    t49.mainPath = { {0,0},{1,0},{1,1},{2,1},{2,0},{2,2},{1,2},{0,2},{0,1} };
+    tmp.push_back(t49);
+
+    // パターン50: 右上と下中にブロック - バリエーション2
+    MiniTemplate t50;
+    t50.cell = { {{0,0,1},{0,0,0},{0,1,0}} };
+    t50.mainPath = { {2,0},{2,1},{1,1},{1,0},{0,0},{0,1},{0,2},{1,2},{2,2} };
+    tmp.push_back(t50);
+
+    // パターン51: 右上と右下にブロック - バリエーション1
+    MiniTemplate t51;
+    t51.cell = { {{0,0,1},{0,0,0},{0,0,1}} };
+    t51.mainPath = { {0,1},{1,1},{1,0},{2,0},{2,1},{1,2},{0,2},{0,0} };
+    tmp.push_back(t51);
+
+    // パターン52: 右上と右下にブロック - バリエーション2
+    MiniTemplate t52;
+    t52.cell = { {{0,0,1},{0,0,0},{0,0,1}} };
+    t52.mainPath = { {0,0},{0,1},{1,1},{1,0},{2,0},{2,1},{1,2},{0,2} };
+    tmp.push_back(t52);
+
+    // パターン53: 中央横2つブロック - バリエーション1
+    MiniTemplate t53;
+    t53.cell = { {{0,0,0},{1,1,0},{0,0,0}} };
+    t53.mainPath = { {0,0},{0,1},{0,2},{1,2},{2,2},{2,1},{2,0},{1,0} };
+    tmp.push_back(t53);
+
+    // パターン54: 中央横2つブロック - バリエーション2
+    MiniTemplate t54;
+    t54.cell = { {{0,0,0},{1,1,0},{0,0,0}} };
+    t54.mainPath = { {2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{0,0},{1,0} };
+    tmp.push_back(t54);
+
+    // パターン55: 左中縦2つブロック - バリエーション1
+    MiniTemplate t55;
+    t55.cell = { {{0,0,0},{1,0,0},{1,0,0}} };
+    t55.mainPath = { {0,0},{0,1},{0,2},{1,2},{2,2},{2,1},{2,0},{1,1},{1,0} };
+    tmp.push_back(t55);
+
+    // パターン56: 左中縦2つブロック - バリエーション2
+    MiniTemplate t56;
+    t56.cell = { {{0,0,0},{1,0,0},{1,0,0}} };
+    t56.mainPath = { {0,2},{0,1},{0,0},{1,0},{1,1},{2,0},{2,1},{2,2},{1,2} };
+    tmp.push_back(t56);
+
+    // パターン57: 左中と右下にブロック - バリエーション1
+    MiniTemplate t57;
+    t57.cell = { {{0,0,0},{1,0,0},{0,0,1}} };
+    t57.mainPath = { {0,0},{0,1},{0,2},{1,2},{2,2},{2,1},{2,0},{1,1},{1,0} };
+    tmp.push_back(t57);
+
+    // パターン58: 左中と右下にブロック - バリエーション2
+    MiniTemplate t58;
+    t58.cell = { {{0,0,0},{1,0,0},{0,0,1}} };
+    t58.mainPath = { {0,2},{0,1},{0,0},{1,0},{1,1},{2,0},{2,1},{1,2} };
+    tmp.push_back(t58);
+
+    // パターン59: 中央と右にブロック - バリエーション1
+    MiniTemplate t59;
+    t59.cell = { {{0,0,0},{0,1,1},{0,0,0}} };
+    t59.mainPath = { {0,2},{0,1},{0,0},{1,0},{2,0},{2,1},{2,2},{1,2} };
+    tmp.push_back(t59);
+
+    // パターン60: 中央と右にブロック - バリエーション2
+    MiniTemplate t60;
+    t60.cell = { {{0,0,0},{0,1,1},{0,0,0}} };
+    t60.mainPath = { {2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{0,0},{1,0} };
+    tmp.push_back(t60);
+
+    // パターン61: 中央と左下にブロック - バリエーション1
+    MiniTemplate t61;
+    t61.cell = { {{0,0,0},{0,1,0},{1,0,0}} };
+    t61.mainPath = { {0,0},{0,1},{0,2},{1,2},{2,2},{2,1},{2,0},{1,0} };
+    tmp.push_back(t61);
+
+    // パターン62: 中央と左下にブロック - バリエーション2
+    MiniTemplate t62;
+    t62.cell = { {{0,0,0},{0,1,0},{1,0,0}} };
+    t62.mainPath = { {0,2},{0,1},{0,0},{1,0},{2,0},{2,1},{2,2},{1,2} };
+    tmp.push_back(t62);
+
+    // パターン63: 中央縦2つブロック - バリエーション1
+    MiniTemplate t63;
+    t63.cell = { {{0,0,0},{0,1,0},{0,1,0}} };
+    t63.mainPath = { {0,0},{1,0},{2,0},{2,2},{1,2},{0,2},{0,1} };
+    tmp.push_back(t63);
+
+    // パターン64: 中央縦2つブロック - バリエーション2
+    MiniTemplate t64;
+    t64.cell = { {{0,0,0},{0,1,0},{0,1,0}} };
+    t64.mainPath = { {0,2},{0,1},{0,0},{1,0},{2,0},{2,2},{1,2} };
+    tmp.push_back(t64);
+
+    // パターン65: 中央と右下にブロック - バリエーション1
+    MiniTemplate t65;
+    t65.cell = { {{0,0,0},{0,1,0},{0,0,1}} };
+    t65.mainPath = { {0,0},{1,0},{2,0},{2,1},{1,2},{0,2},{0,1} };
+    tmp.push_back(t65);
+
+    // パターン66: 中央と右下にブロック - バリエーション2
+    MiniTemplate t66;
+    t66.cell = { {{0,0,0},{0,1,0},{0,0,1}} };
+    t66.mainPath = { {0,2},{0,1},{0,0},{1,0},{2,0},{2,1},{1,2} };
+    tmp.push_back(t66);
+
+    // パターン67: 右中と左下にブロック - バリエーション1
+    MiniTemplate t67;
+    t67.cell = { {{0,0,0},{0,0,1},{1,0,0}} };
+    t67.mainPath = { {0,2},{0,1},{0,0},{1,0},{2,0},{2,1},{2,2},{1,2},{1,1} };
+    tmp.push_back(t67);
+
+    // パターン68: 右中と左下にブロック - バリエーション2
+    MiniTemplate t68;
+    t68.cell = { {{0,0,0},{0,0,1},{1,0,0}} };
+    t68.mainPath = { {1,0},{2,0},{2,1},{2,2},{1,2},{1,1},{0,1},{0,0},{0,2} };
+    tmp.push_back(t68);
+
+    // パターン69: 右中縦2つブロック - バリエーション1
+    MiniTemplate t69;
+    t69.cell = { {{0,0,0},{0,0,1},{0,0,1}} };
+    t69.mainPath = { {0,0},{0,1},{1,1},{2,1},{2,0},{2,2},{1,2},{0,2},{1,0} };
+    tmp.push_back(t69);
+
+    // パターン70: 右中縦2つブロック - バリエーション2
+    MiniTemplate t70;
+    t70.cell = { {{0,0,0},{0,0,1},{0,0,1}} };
+    t70.mainPath = { {2,0},{2,1},{1,1},{0,1},{0,0},{0,2},{1,2},{2,2},{1,0} };
+    tmp.push_back(t70);
+
+    // パターン71: 下左横2つブロック - バリエーション1
+    MiniTemplate t71;
+    t71.cell = { {{0,0,0},{0,0,0},{1,1,0}} };
+    t71.mainPath = { {0,0},{0,1},{0,2},{1,2},{2,2},{2,1},{2,0},{1,0},{1,1} };
+    tmp.push_back(t71);
+
+    // パターン72: 下左横2つブロック - バリエーション2
+    MiniTemplate t72;
+    t72.cell = { {{0,0,0},{0,0,0},{1,1,0}} };
+    t72.mainPath = { {2,2},{2,1},{2,0},{1,0},{1,1},{0,1},{0,0},{0,2},{1,2} };
+    tmp.push_back(t72);
+
+    // パターン73: 下左と下右にブロック - バリエーション1
+    MiniTemplate t73;
+    t73.cell = { {{0,0,0},{0,0,0},{1,0,1}} };
+    t73.mainPath = { {0,0},{1,0},{2,0},{2,1},{1,1},{0,1},{0,2},{1,2} };
+    tmp.push_back(t73);
+
+    // パターン74: 下左と下右にブロック - バリエーション2
+    MiniTemplate t74;
+    t74.cell = { {{0,0,0},{0,0,0},{1,0,1}} };
+    t74.mainPath = { {0,2},{0,1},{1,1},{2,1},{2,0},{1,0},{0,0},{1,2} };
+    tmp.push_back(t74);
+
+    // パターン75: 下中横2つブロック - バリエーション1
+    MiniTemplate t75;
+    t75.cell = { {{0,0,0},{0,0,0},{0,1,1}} };
+    t75.mainPath = { {0,0},{1,0},{2,0},{2,1},{2,2},{1,2},{0,2},{0,1},{1,1} };
+    tmp.push_back(t75);
+
+    // パターン76: 下中横2つブロック - バリエーション2
+    MiniTemplate t76;
+    t76.cell = { {{0,0,0},{0,0,0},{0,1,1}} };
+    t76.mainPath = { {2,2},{2,1},{2,0},{1,0},{0,0},{0,1},{0,2},{1,2},{1,1} };
+    tmp.push_back(t76);
+
+    return tmp;
+}// グローバル：テンプレ一覧
+
+const std::vector<MiniTemplate> g_miniTemplates = makeAllTemplates();
 
 
 MiniTemplate rotate90(const MiniTemplate& src)
 {
-    MiniTemplate dst = {};
-
-    for (int y = 0; y < 3; ++y)
-        for (int x = 0; x < 3; ++x) {
+    MiniTemplate dst{};
+    for (int y = 0; y < 3; y++)
+        for (int x = 0; x < 3; x++)
             dst.cell[x][2 - y] = src.cell[y][x];
-            dst.canStart[x][2 - y] = src.canStart[y][x];
-            dst.canGoal[x][2 - y] = src.canGoal[y][x];
-        }
 
+    dst.mainPath.clear(); // ★in/out方式：ここでは作らない
     return dst;
 }
-MiniTemplate rotate180(const MiniTemplate& t)
-{
-    return rotate90(rotate90(t));
-}
+
+MiniTemplate rotate180(const MiniTemplate& src) { return rotate90(rotate90(src)); }
+MiniTemplate rotate270(const MiniTemplate& src) { return rotate90(rotate180(src)); }
 
 MiniTemplate flipHorizontal(const MiniTemplate& src)
 {
-    MiniTemplate dst = {};
-
-    for (int y = 0; y < 3; ++y)
-        for (int x = 0; x < 3; ++x) {
+    MiniTemplate dst{};
+    for (int y = 0; y < 3; y++)
+        for (int x = 0; x < 3; x++)
             dst.cell[y][2 - x] = src.cell[y][x];
-            dst.canStart[y][2 - x] = src.canStart[y][x];
-            dst.canGoal[y][2 - x] = src.canGoal[y][x];
-        }
 
+    dst.mainPath.clear(); // ★in/out方式：ここでは作らない
     return dst;
 }
 
@@ -682,7 +509,26 @@ std::vector<MiniTemplate> generateVariants(const MiniTemplate& base)
         v.push_back(flipHorizontal(t));
         t = rotate90(t);
     }
-
     return v;
 }
 
+
+void buildArrowFromPath(MiniTemplate& t)
+{
+    for (int y = 0; y < 3; y++)
+        for (int x = 0; x < 3; x++)
+            t.arrow[y][x] = NONE;
+
+    for (int i = 0; i + 1 < (int)t.mainPath.size(); i++)
+    {
+        int x1 = t.mainPath[i].first;
+        int y1 = t.mainPath[i].second;
+        int x2 = t.mainPath[i + 1].first;
+        int y2 = t.mainPath[i + 1].second;
+
+        if (x2 == x1 + 1)      t.arrow[y1][x1] = RIGHT;
+        else if (x2 == x1 - 1) t.arrow[y1][x1] = LEFT;
+        else if (y2 == y1 + 1) t.arrow[y1][x1] = DOWN;
+        else if (y2 == y1 - 1) t.arrow[y1][x1] = UP;
+    }
+}
