@@ -573,7 +573,7 @@ namespace GAME03 {
         fill(255, 255, 255);
         textSize(24);
         text("移動: A/D/W/S", offsetX, textY);
-        text("Z: リスタート R: 1マス戻る  B: タイトルへ ", offsetX, textY + 30);
+        text("Z: リスタート R: 1マス戻る  B: タイトルへ  F:　クリアルート", offsetX, textY + 30);
 
         char buf[64];
         sprintf_s(buf, "訪問マス: %d / %d", visitCount, totalEmpty);
