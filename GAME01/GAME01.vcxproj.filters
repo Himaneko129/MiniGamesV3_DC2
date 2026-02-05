@@ -14,7 +14,5 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\MAIN\assets\game01\title.txt" />
-    <Text Include="score.txt" />
-    <Text Include="playcount.txt" />
   </ItemGroup>
 </Project>

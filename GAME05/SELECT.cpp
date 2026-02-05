@@ -86,12 +86,17 @@ namespace GAME05 {
 	}
 	void SELECT::select_text() {
 		textSize(50);
+		text("[Artcore][House]", 25, height / 4+100);
+		text("[Hardcore][Gabba][Jersey club]", (width / 2) + 50, height / 4+100);
+		text("[Drum'n'bass][CROSSBREED]", 50, height - (height / 4)+100);
+		textSize(100);
 		text("STAGE1", 50, height / 4);
-		text("STAGE2", (width / 2) + 50, height / 4);
-		text("STAGE3", 50, height - (height / 4));
+		text("STAGE3", (width / 2) + 50, height / 4);
+		text("STAGE2", 50, height - (height / 4));
 		text("STAGE4", (width / 2) + 50, height - (height / 4));
-		text("COMING SOON...", 50, height - (height / 4)+100);
+		//text("COMING SOON...", 50, height - (height / 4)+100);
 		text("COMING SOON...", (width / 2) + 50, height - (height / 4) + 100);
+		textSize(50);
 		fill(128);
 		text("'F' : SELECT_GAME", 750, height / 2+25);
 		text("'M':Mute", width - 200, height - 200);

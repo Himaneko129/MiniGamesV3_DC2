@@ -16,7 +16,7 @@ void BULLET::draw() {
 
 bool BULLET::isOut() const {
     return dead;
-}
+} 
 
 float BULLET::getX() const { return x; }
 float BULLET::getY() const { return y; }

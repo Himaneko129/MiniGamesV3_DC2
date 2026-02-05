@@ -3,9 +3,7 @@
 #include "../MAIN/GAME_BASE.h"
 #include "player.h"
 #include "enemy.h"
-#include "bullet.h"
-#include "ebullet.h"
-
+#include "STEP.h"
 namespace GAME04
 {
     class GAME :
@@ -19,16 +17,15 @@ namespace GAME04
         void destroy();
         void move();
         void draw();
+        void drawTitle();
+        void drawClearBackground();
+        void drawClearLight();
+        int score = 0;
+      
         class PLAYER* player = nullptr;
         class ENEMY* enemy = nullptr;
-        /* class BULLET* bullet = nullptr;
-         class ENEMYBULLET* ebullet = nullptr;*/
-         /*static const int MAX_BULLET = 100;
-         BULLET bullets[MAX_BULLET];
-         ENEMYBULLET ebullets[MAX_BULLET];*/
-
-         //int enemyShootTimer = 0;
-         //PLAYER* player = nullptr;
+       
         std::vector<ENEMY*> enemies;
+        std::vector<STEP*> steps;
     };
 }

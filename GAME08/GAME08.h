@@ -1,4 +1,5 @@
 #pragma once
+#include "../MAIN/MAIN.h"
 #include "../MAIN/GAME_BASE.h"
 #include "Board.h"
 
@@ -9,9 +10,9 @@ namespace GAME08
         GAME(class MAIN* main);
         ~GAME() {}
 
-        int create();
-        void proc();
-        void destroy();
+        int create()override;
+        void proc()override;
+        void destroy()override;
 
     private:
 

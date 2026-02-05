@@ -41,6 +41,12 @@ namespace GAME04 {
 
         scrollX = wx - 400;
         if (scrollX < 0) scrollX = 0;
+
+        if (invincibleTimer > 0)
+            invincibleTimer--;
+
+       
+
     }
 
     void PLAYER::draw()

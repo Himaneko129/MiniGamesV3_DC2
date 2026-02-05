@@ -2,22 +2,40 @@
 #include "../MAIN/MAIN.h"
 #include "GAME07.h"
 #include <time.h> 
+#include<string>
 namespace GAME07   
 {				   
 	int GAME::create()
 	{
 		State = TITLE;
-		backImg = loadImage("..\\main\\assets\\game07\\back.png");
-		dice1Img = loadImage("..\\main\\assets\\game07\\dice1.png");
-		dice2Img = loadImage("..\\main\\assets\\game07\\dice2.png");
-		dice3Img = loadImage("..\\main\\assets\\game07\\dice3.png");
-		dice4Img = loadImage("..\\main\\assets\\game07\\dice4.png");
-		dice5Img = loadImage("..\\main\\assets\\game07\\dice5.png");
-		dice6Img = loadImage("..\\main\\assets\\game07\\dice6.png");
-		oyaImg = loadImage("..\\main\\assets\\game07\\oya.png");
-		yakuImg= loadImage("..\\main\\assets\\game07\\Yaku.png");
-		oyaSnd=loadSound("..\\main\\assets\\game07\\oyaroll.wav");
-		playerSnd = loadSound("..\\main\\assets\\game07\\playerroll.wav");
+		taroturaImg = loadImage("..\\main\\assets\\game07\\tarot_ura.png");
+		tarot0Img = loadImage("..\\main\\assets\\game07\\00_fool.png");
+		tarot1Img = loadImage("..\\main\\assets\\game07\\01_magician.png");
+		tarot2Img = loadImage("..\\main\\assets\\game07\\02_high_priestess.png");
+		tarot3Img = loadImage("..\\main\\assets\\game07\\03_empress.png");
+		tarot4Img = loadImage("..\\main\\assets\\game07\\04_enperor.png");
+		tarot5Img = loadImage("..\\main\\assets\\game07\\05_hierophant.png");
+		tarot6Img = loadImage("..\\main\\assets\\game07\\06_lovers.png");
+		tarot7Img = loadImage("..\\main\\assets\\game07\\07_chariot.png");
+		tarot8Img= loadImage("..\\main\\assets\\game07\\08_justice.png");
+		tarot9Img = loadImage("..\\main\\assets\\game07\\09_hermit.png");
+		tarot10Img = loadImage("..\\main\\assets\\game07\\10_wheel.png");
+		tarot11Img = loadImage("..\\main\\assets\\game07\\11_strength.png");
+		tarot12Img = loadImage("..\\main\\assets\\game07\\12_hanged.png");
+		tarot13Img = loadImage("..\\main\\assets\\game07\\13_death.png");
+		tarot14Img = loadImage("..\\main\\assets\\game07\\14_temperance.png");
+		tarot15Img = loadImage("..\\main\\assets\\game07\\15_devil.png");
+		tarot16Img = loadImage("..\\main\\assets\\game07\\16_tower.png");
+		tarot17Img = loadImage("..\\main\\assets\\game07\\17_star.png");
+		tarot18Img = loadImage("..\\main\\assets\\game07\\18_moon.png");
+		tarot19Img = loadImage("..\\main\\assets\\game07\\19_sun.png");
+		tarot20Img = loadImage("..\\main\\assets\\game07\\20_judgement.png");
+		tarot21Img = loadImage("..\\main\\assets\\game07\\21_world.png");
+
+		tarotSnd=loadSound("..\\main\\assets\\game07\\tarot.wav");
+		clearSnd = loadSound("..\\main\\assets\\game07\\clear.wav");
+		hangedSnd = loadSound("..\\main\\assets\\game07\\hanged.wav");
+
 		srand(time(NULL));
 		return 0;  
 	}
@@ -29,32 +47,37 @@ namespace GAME07
 
 	void GAME::proc()
 	{
+		if (State != TITLE)Draw();
 		if (State == TITLE)Title();
-		else if (State == YAKU)Yaku();
+		else if (State == RULE)Rule();
 		else if (State == INIT)Init();
-		else if (State == OYA)Oya();
-		else if (State == PLAY)Play();
+		else if (State == ENEMY)Enemy();
+		else if (State == JUDGE)Judge();
+		else if (State == JUDGE_ENEMY) Judge();
+		else if (State == PLAYER)Player();
 		else if (State == WIN)Win();
 		else if (State == LOSE)Lose();
-		else if (State == DRAW)Draw();
+		else if (State == TIE)Tie();
 	}
+
 	void GAME::Title() {
 		rectMode(CORNER);
-		clear();
-		image(backImg, 150, 0);
-		fill(0);
-		textSize(250);
-		text("チンチロ", 450, 400);
-		fill(0);
+		clear(0,100,0);
+		fill(200,200,0);
+		textSize(150);
+		text("タロット神経衰弱", 350, 400);
+		
 		textSize(100);
 		text("SPACEキー:プレイ", 500, 600);
-		text("Rキー:役の一覧", 500, 700);
-
+		rectMode(CENTER);
+		image(taroturaImg, 300, 300,0, 0.6);
+		image(tarot0Img, 300, 300,0, 0.4);
 		if (isTrigger(KEY_SPACE)) {
 			State = INIT;
 		}
+		text("Rキー:遊び方", 500, 750);
 		if (isTrigger(KEY_R)) {
-			State = YAKU;
+			State=RULE;
 		}
 		fill(255, 0, 0);
 		textSize(80);
@@ -63,336 +86,403 @@ namespace GAME07
 			main()->backToMenu();
 		}
 	}
-	void GAME::Yaku() {
+	void GAME::Rule() {
+		clear(0, 100, 0);
+		text("このゲームは2人のプレイヤーが交互にカードをめくり図柄を揃えるゲームです", 50, 100);
+		text("カードには正位置と逆位置があり正位置のカードを揃えるとポイントが加算され", 50, 150);
+		text("逆位置のカードを揃えると減算されます", 50, 200);
+		text("全てのカードがなくなった時、よりポイントが多いプレイヤーの勝利です", 50, 250);
+		fill(255, 255, 0);
+		text("一部のカードは正位置で揃える事で特殊な効果を発揮します", 50, 400);
+		fill(255);
+		text("「吊るされた男」のカードを正位置で揃えると以降のポイントの加算と減算が", 50, 450);
+		text("逆転し、「愚者」のカードを正位置で揃えると元の仕様に戻ります", 50, 500);
 		rectMode(CORNER);
-		clear();
-		image(backImg, 150, 0);
-		image(yakuImg, 500, 0,0,0.8f);
-		fill(0);
-		textSize(80);
-		text("Enterでタイトルに戻る", 150, height);
-		if (isTrigger(KEY_ENTER)) {
+		image(tarot12Img, 50, 550, 0, 0.5);
+		image(tarot12Img, 150, 550, 0, 0.5);
+		image(tarot0Img, 350, 550, 0, 0.5);
+		image(tarot0Img, 450, 550, 0, 0.5);
+		text("場に残っているカードの種類や相手との点数差を見て上手く「吊るされた男」の", 50, 800);
+		text("効果を活用してみましょう", 50, 850);
+		text("タイトルに戻る:SPACE", 50, 1000);
+		if (isTrigger(KEY_SPACE)) {
 			State = TITLE;
 		}
 	}
 	void GAME::Init() {
-		for (int j = 0; j < 3; j++) {
-			oyaDice[j] = 0;
-		}
-		for (int j = 0; j < 3; j++) {
-			playerDice[j] = 0;
-		}
-		oyaRolled = false;
-		playerRolled = false;
-		oyaYaku = 0;
-		playerYaku = 0;
-		oyaPair = 0;
-		playerPair = 0;
-		oyaZorome = 0;
-		playerZorome = 0;
-		ohas1 = false;
-		ohas2 = false;
-		ohas3 = false;
-		ohas4 = false;
-		ohas5 = false;
-		ohas6 = false;
-		phas1 = false;
-		phas2 = false;
-		phas3 = false;
-		phas4 = false;
-		phas5 = false;
-		phas6 = false;
+		clear(0, 100, 0);
+		
+		firstCardIdx = -1;    
+		secondCardIdx = -1;   
+		waitTimer = 0;
+		cards_remaining = 48; 
+		is_reversed_world = false; 
 
-		State = OYA;
+		score_player = 0;
+		score_cpu = 0;
+		int idx = 0;
+		for (int i = 0; i < TOTAL_CARDS; i++) memory[i] = -1;
+		int special_ids[] = { 0, 12 };
+		for (int i = 0; i < 2; i++) {
+			int id = special_ids[i];
+			for (int k = 0; k < 2; k++) { 
+				Position p = (k == 0) ? POS_UPRIGHT : POS_REVERSED;
+				for (int j = 0; j < 2; j++) {
+					board[idx].id = id;
+					board[idx].position = p;
+					board[idx].state = STATE_HIDDEN;
+					idx++;
+				}
+			}
+		}
+
+		int ratio_patterns[3][2] = { {8, 12}, {10, 10}, {12, 8} };
+		int p_idx = rand() % 3;
+		int num_upright_pairs = ratio_patterns[p_idx][0];
+
+		int normal_ids[20];
+		int n_idx = 0;
+		for (int i = 1; i <= 21; i++) {
+			if (i == 12) continue;
+			normal_ids[n_idx++] = i;
+		}
+
+		for (int i = 0; i < 20; i++) {
+			int r = rand() % 20;
+			int tmp = normal_ids[i];
+			normal_ids[i] = normal_ids[r];
+			normal_ids[r] = tmp;
+		}
+
+		for (int i = 0; i < 20; i++) {
+			Position pair_pos = (i < num_upright_pairs) ? POS_UPRIGHT : POS_REVERSED;
+			for (int j = 0; j < 2; j++) {
+				board[idx].id = normal_ids[i];
+				board[idx].position = pair_pos;
+				board[idx].state = STATE_HIDDEN;
+				idx++;
+			}
+		}
+
+		for (int i = 0; i < TOTAL_CARDS; i++) {
+			int r = rand() % TOTAL_CARDS;
+			Card temp = board[i];
+			board[i] = board[r];
+			board[r] = temp;
+		}
+		int cols = 8;                         
+		int rows = 6;                         
+		int card_w = 100;                     
+		int card_h = 150;                     
+		int spacing_x = 20;                   
+		int spacing_y = 20;                   
+
+		int total_w = cols * card_w + (cols - 1) * spacing_x;
+		int total_h = rows * card_h + (rows - 1) * spacing_y;
+
+		int start_x = (width - total_w) / 2;
+		int start_y = (height - total_h) / 2 + 50;
+
+		for (int i = 0; i < TOTAL_CARDS; i++) {
+			int col = i % cols;
+			int row = i / cols;
+			board[i].x = start_x + col * (card_w + spacing_x);
+			board[i].y = start_y + row * (card_h + spacing_y);
+		}
+		State = PLAYER;
 	}
-	void GAME::Oya() {
-		rectMode(CORNER);
-		clear();
-		image(backImg, 150, 0);
-		rectMode(CENTER);
-		image(oyaImg, Width / 2, Height / 2);
-		rectMode(CENTER);
-		fill(0);
-		text("親の手番",150 , 100);
-		textSize(100);
-		text("サイコロを振る:R",500, Height);
-		if (!oyaRolled && isTrigger(KEY_R)) {
-			playSound(oyaSnd);
-			oyaDice[0] = rand() % 6 + 1;
-			oyaDice[1] = rand() % 6 + 1;
-			oyaDice[2] = rand() % 6 + 1;
+	void GAME::Draw() {
+		clear(0, 100, 0); 
 
-			oyaRolled = true; 
+		fill(255);
+		textSize(50);
+		if (is_reversed_world) {
+			text("FIELD: HANGED MAN", 10, 50);
 		}
+		else {
+			text("FIELD: NORMAL", 10, 50);
+		}
+		
 
-		if (oyaRolled) {
-			for (int i = 0; i < 3; i++) {
-				px = 700 + 250 * i;
-				switch (oyaDice[i]) {
-				case 1: image(dice1Img, px, py, 0, 0.2f); break;
-				case 2: image(dice2Img, px, py, 0, 0.2f); break;
-				case 3: image(dice3Img, px, py, 0, 0.2f); break;
-				case 4: image(dice4Img, px, py, 0, 0.2f); break;
-				case 5: image(dice5Img, px, py, 0, 0.2f); break;
-				case 6: image(dice6Img, px, py, 0, 0.2f); break;
-				}
-			}
-			for (int h = 0; h < 3; h++) {
-				if (oyaDice[h] == 1)ohas1 = true;
-				if (oyaDice[h] == 2)ohas2 = true;
-				if (oyaDice[h] == 3)ohas3 = true;
-			}
-			for (int s = 0; s < 3; s++) {
-				if (oyaDice[s] == 4)ohas4 = true;
-				if (oyaDice[s] == 5)ohas5 = true;
-				if (oyaDice[s] == 6)ohas6 = true;
-			}
-			if (ohas1&&ohas2&&ohas3) {
-				fill(0, 0, 255);
-				text("ヒフミ！",700,400);
-				oyaYaku = 2;
-			}
-			else if (ohas4&&ohas5&&ohas6) {
-				fill(255, 255, 0);
-				text("シゴロ！", 700, 400);
-				oyaYaku = 1;
-			}
-			else if (oyaDice[0] == oyaDice[1] && oyaDice[1] == oyaDice[2]) {
-				if (oyaDice[0] == 1) {
-					fill(255, 0, 0);
-					text("ピンゾロ！", 700, 400);
-					oyaYaku = 1;
-				}
-				else {
-					fill(255, 255, 0);
-					text("ゾロ目！", 700, 400);
-					oyaYaku = 3;
-					oyaZorome = oyaDice[0];
-				}
-			}
-			else if (oyaDice[0] == oyaDice[1] || oyaDice[1] == oyaDice[2] || oyaDice[0] == oyaDice[2]) {
-				fill(0);
-				text("1ペア！", 700, 400);
-				oyaYaku = 4;
-				if (oyaDice[0] == oyaDice[1] && oyaDice[0] != oyaDice[2]) {
-					oyaPair = oyaDice[2];
-				}
-				else if (oyaDice[0] == oyaDice[2] && oyaDice[0] != oyaDice[1]) {
-					oyaPair = oyaDice[1];
-				}
-				else if (oyaDice[1] == oyaDice[2] && oyaDice[1] != oyaDice[0]) {
-					oyaPair = oyaDice[0];
-				}
+		std::string s = "PLAYER: " + std::to_string(score_player) + "  CPU: " + std::to_string(score_cpu);
+		text(s.c_str(), 1400, 50);
+
+		for (int i = 0; i < TOTAL_CARDS; i++) {
+			if (board[i].state == STATE_TAKEN) continue;
+
+			if (board[i].state == STATE_HIDDEN) {
+				image(taroturaImg, board[i].x, board[i].y, 0, 0.6);
 			}
 			else {
-				fill(0, 0, 255);
-				text("役なし...", 700, 400);
-				oyaYaku = 2;
-			}
-			fill(0);
-			text("Enterで次へ", 600, 100);
-			if (isTrigger(KEY_ENTER)) {
-				if (oyaYaku == 1) {
-					State = LOSE;
+				int targetImg;
+				switch (board[i].id) {
+				case 0:  targetImg = tarot0Img; break; 
+				case 1:  targetImg = tarot1Img; break;
+				case 2:  targetImg = tarot2Img; break;
+				case 3:  targetImg = tarot3Img; break;
+				case 4:  targetImg = tarot4Img; break;
+				case 5:  targetImg = tarot5Img; break;
+				case 6:  targetImg = tarot6Img; break;
+				case 7:  targetImg = tarot7Img; break;
+				case 8:  targetImg = tarot8Img; break;
+				case 9:  targetImg = tarot9Img; break;
+				case 10: targetImg = tarot10Img; break;
+				case 11: targetImg = tarot11Img; break;
+				case 12: targetImg = tarot12Img; break;
+				case 13: targetImg = tarot13Img; break;
+				case 14: targetImg = tarot14Img; break;
+				case 15: targetImg = tarot15Img; break;
+				case 16: targetImg = tarot16Img; break;
+				case 17: targetImg = tarot17Img; break;
+				case 18: targetImg = tarot18Img; break;
+				case 19: targetImg = tarot19Img; break;
+				case 20: targetImg = tarot20Img; break;
+				case 21: targetImg = tarot21Img; break;
+				default: targetImg = taroturaImg; break;
 				}
-				else if (oyaYaku == 2) {
-					State = WIN;
-				}
-				else {
-					State = PLAY;
-				}
-				
-				return;
+				int angle = (board[i].position == POS_REVERSED) ? 180 : 0;
+				image(targetImg, board[i].x, board[i].y, angle, 0.4);
 			}
 		}
 
+	}
+	void GAME::Player() {
+		text("PLAYER TURN", 10, 100);
+		if (isTrigger(MOUSE_LBUTTON)) {
+			for (int i = 0; i < TOTAL_CARDS; i++) {
+				if (board[i].state == STATE_HIDDEN) {
+					if (mouseX >= board[i].x-50 && mouseX <= board[i].x +50 &&
+						mouseY >= board[i].y-75 && mouseY <= board[i].y + 75) {
+
+						board[i].state = STATE_REVEALED; 
+						playSound(tarotSnd);
+						updateMemory(i, board[i].id);
+						if (firstCardIdx == -1) {
+							firstCardIdx = i;
+						}
+						else {
+							secondCardIdx = i;
+							State = JUDGE;
+							waitTimer = 0;
+						}
+						break;
+					}
+				}
+			}
+		}
+		text("Enterでメニューへ", 0, height);
+		if (isTrigger(KEY_ENTER)) {
+			main()->backToMenu();
+		}
 		
 	}
-	void GAME::Play() {
-		rectMode(CORNER);
-		clear();
-		image(backImg, 150, 0);
-		fill(0);
-		text("自分の手番", 150, 100);
-		textSize(100);
-		text("サイコロを振る:R", 500, Height);
-		if (!playerRolled && isTrigger(KEY_R)) {
-			playSound(playerSnd);
-			playerDice[0] = rand() % 6 + 1;
-			playerDice[1] = rand() % 6 + 1;
-			playerDice[2] = rand() % 6 + 1;
-			
-			playerRolled = true; 
+	void GAME::Enemy(){
+		text("ENEMY TURN", 10, 100);
+		waitTimer++;
+
+		if (firstCardIdx == -1) {
+			if (waitTimer < 60) return; 
+
+			int first = -1;
+
+			for (int i = 0; i < TOTAL_CARDS; i++) {
+				for (int j = i + 1; j < TOTAL_CARDS; j++) {
+					if (memory[i] != -1 && memory[i] == memory[j] &&
+						board[i].state == STATE_HIDDEN && board[j].state == STATE_HIDDEN) {
+
+						bool isSpecial = (memory[i] == 0 || memory[i] == 12);
+						if (isSpecial && board[i].position != board[j].position) continue;
+
+						int predict_pts = (board[i].position == POS_UPRIGHT) ? 1 : -1;
+						predict_pts *= -1; 
+						if (is_reversed_world) predict_pts *= -1;
+
+						if (predict_pts > 0) {
+							first = i;
+							break;
+						}
+					}
+				}
+				if (first != -1) break;
+			}
+
+			if (first == -1) {
+				do {
+					first = rand() % TOTAL_CARDS;
+				} while (board[first].state != STATE_HIDDEN);
+			}
+
+			board[first].state = STATE_REVEALED;
+			playSound(tarotSnd);
+			updateMemory(first, board[first].id);
+			firstCardIdx = first;
+
+			waitTimer = 0; 
+			return; 
 		}
-		rectMode(CENTER);
-		if (playerRolled) {
-			for (int i = 0; i < 3; i++) {
-				px = 700 + 250 * i;
-				switch (playerDice[i]) {
-				case 1: image(dice1Img, px, py, 0, 0.2f); break;
-				case 2: image(dice2Img, px, py, 0, 0.2f); break;
-				case 3: image(dice3Img, px, py, 0, 0.2f); break;
-				case 4: image(dice4Img, px, py, 0, 0.2f); break;
-				case 5: image(dice5Img, px, py, 0, 0.2f); break;
-				case 6: image(dice6Img, px, py, 0, 0.2f); break;
+
+		else {
+			if (waitTimer < 180) return;  
+
+			int second = -1;
+			int first = firstCardIdx; 
+
+			for (int i = 0; i < TOTAL_CARDS; i++) {
+				if (i != first && memory[i] == board[first].id && board[i].state == STATE_HIDDEN) {
+
+					bool isSpecial = (board[first].id == 0 || board[first].id == 12);
+					if (isSpecial && board[i].position != board[first].position) continue;
+
+					int predict_pts = (board[first].position == POS_UPRIGHT) ? 1 : -1;
+					predict_pts *= -1; 
+					if (is_reversed_world) predict_pts *= -1;
+
+					if (predict_pts > 0) {
+						second = i;
+						break;
+					}
 				}
 			}
-			for (int h = 0; h < 3; h++) {
-				if (playerDice[h] == 1)phas1 = true;
-				if (playerDice[h] == 2)phas2 = true;
-				if (playerDice[h] == 3)phas3 = true;
+
+			if (second == -1) {
+				do {
+					second = rand() % TOTAL_CARDS;
+				} while (second == first || board[second].state != STATE_HIDDEN);
 			}
-			for (int s = 0; s < 3; s++) {
-				if (playerDice[s] == 4)phas4 = true;
-				if (playerDice[s] == 5)phas5 = true;
-				if (playerDice[s] == 6)phas6 = true;
+
+			board[second].state = STATE_REVEALED;
+			playSound(tarotSnd);
+			updateMemory(second, board[second].id);
+			secondCardIdx = second;
+
+			State = JUDGE_ENEMY;
+			waitTimer = 0;
+		}
+		
+	}
+	void GAME::Judge() {
+		if (State == JUDGE) {
+			text("PLAYER TURN", 10, 100);
+		}
+		if (State == JUDGE_ENEMY) {
+			text("ENEMY TURN", 10, 100);
+		}
+		waitTimer++;
+		if (waitTimer < 60) return;
+
+		if (board[firstCardIdx].id == board[secondCardIdx].id) {
+			Position p1 = board[firstCardIdx].position;
+			Position p2 = board[secondCardIdx].position;
+
+			bool isSpecial = (board[firstCardIdx].id == 0 || board[firstCardIdx].id == 12);
+			if (isSpecial && p1 != p2) {
+				board[firstCardIdx].state = STATE_HIDDEN;
+				board[secondCardIdx].state = STATE_HIDDEN;
+				State = (State == JUDGE) ? ENEMY : PLAYER;
+				goto RESET_JUDGE;
 			}
-			if (phas1&&phas2&&phas3) {
-				fill(0, 0, 255);
-				text("ヒフミ！", 700, 400);
-				playerYaku = 2;
+
+			int pts = 0;
+			if (p1 == POS_UPRIGHT && p2 == POS_UPRIGHT) { 
+				pts = 1;
 			}
-			else if (phas4&&phas5&&phas6) {
-				fill(255, 255, 0);
-				text("シゴロ！", 700, 400);
-				playerYaku = 1;
+			else if (p1 == POS_REVERSED && p2 == POS_REVERSED) pts = -1; 
+
+			if (State == JUDGE_ENEMY) {
+				pts *= -1;
 			}
-			else if (playerDice[0] == playerDice[1] && playerDice[1] == playerDice[2]) {
-				if (playerDice[0] == 1) {
-					fill(255, 0, 0);
-					text("ピンゾロ！", 700, 400);
-					playerYaku = 1;
-				}
-				else {
-					fill(255, 255, 0);
-					text("ゾロ目！", 700, 400);
-					playerZorome = playerDice[0];
-					playerYaku = 3;
-				}
+
+			if (is_reversed_world) {
+				pts *= -1;
 			}
-			else if (playerDice[0] == playerDice[1] || playerDice[1] == playerDice[2] || playerDice[0] == playerDice[2]) {
-				fill(0);
-				text("1ペア！", 700, 400);
-				playerYaku = 4;
-				if (playerDice[0] == playerDice[1] && playerDice[0] != playerDice[2]) {
-					playerPair = playerDice[2];
-				}
-				else if (playerDice[0] == playerDice[2] && playerDice[0] != playerDice[1]) {
-					playerPair = playerDice[1];
-				}
-				else if (playerDice[1] == playerDice[2] && playerDice[1] != playerDice[0]) {
-					playerPair = playerDice[0];
+
+			if (State == JUDGE) {
+				score_player += pts;
+				playSound(clearSnd);
+				if (p1 == POS_UPRIGHT && p2 == POS_UPRIGHT) {
+					applyEffect(board[firstCardIdx].id);
 				}
 			}
 			else {
-				fill(0, 0, 255);
-				text("役なし...", 700, 400);
-				playerYaku = 2;
+				score_cpu += pts;
+				if (p1 == POS_REVERSED && p2 == POS_REVERSED) {
+					applyEffect(board[firstCardIdx].id);
+				}
 			}
-			fill(0);
-			text("Enterで次へ", 700, 100);
-			if (isTrigger(KEY_ENTER)) {
-				if (playerYaku == 1) {
-					State = WIN;
-				}
-				else if (playerYaku == 2) {
-					State = LOSE;
-				}
-				else if (playerYaku == 3) {
-					if (oyaYaku == 3) {
-						if (oyaZorome > playerZorome) {
-							State = LOSE;
-						}
-						else if (oyaZorome < playerZorome) {
-							State = WIN;
-						}
-						else if (oyaZorome == playerZorome) {
-							State = DRAW;
-						}
-					}
-					else {
-						State = WIN;
-					}
-				}
-				else if (playerYaku == 4) {
-					if (oyaYaku == 4) {
-						if (oyaPair > playerPair) {
-							State = LOSE;
-						}
-						else if (oyaPair < playerPair) {
-							State = WIN;
-						}
-						else if (oyaPair == playerPair) {
-							State = DRAW;
-						}
-					}
-					else if(oyaYaku==3){
-						State = LOSE;
-					}
-					else {
-						State = WIN;
-					}
-				}
+
+			board[firstCardIdx].state = STATE_TAKEN;
+			board[secondCardIdx].state = STATE_TAKEN;
+			cards_remaining -= 2;
+
+			if (cards_remaining <= 0) {
+				if (score_player > score_cpu) State = WIN;
+				else if (score_player < score_cpu) State = LOSE;
+				else State = TIE;
 				return;
 			}
+
+			State = (State == JUDGE) ? PLAYER : ENEMY;
+		}
+		else {
+			board[firstCardIdx].state = STATE_HIDDEN;
+			board[secondCardIdx].state = STATE_HIDDEN;
+			State = (State == JUDGE) ? ENEMY : PLAYER;
 		}
 
+	RESET_JUDGE:
+		firstCardIdx = -1;
+		secondCardIdx = -1;
+		waitTimer = 0;
 	}
 	void GAME::Win() {
-		rectMode(CORNER);
-		clear();
-		image(backImg, 150, 0);
-		fill(255, 0, 0);
-		textSize(500);
-		text("勝ち！", 300, 500);
-		fill(0);
-		textSize(80);
-		text("Enterでタイトルに戻る", 150, height);
-		if (isTrigger(KEY_ENTER)) {
-			State = TITLE;
-		}
-		textSize(100);
-		text("SPACE:もう一勝負", 500, 800);
+		clear(0, 50, 100); 
+		fill(255, 215, 0); 
+		textSize(150);
+		text("YOU WIN", 700, 400);
+		fill(255);
+		textSize(50);
+		text("タイトルに戻る:SPACE", 700, 800);
 		if (isTrigger(KEY_SPACE)) {
-			State = INIT;
+			State = TITLE;
 		}
 	}
 	void GAME::Lose() {
-		rectMode(CORNER);
-		clear();
-		image(backImg, 150, 0);
-		fill(0,0,255);
-		textSize(500);
-		text("負け！", 300, 500);
-		fill(0);
-		textSize(80);
-		text("Enterでタイトルに戻る", 150, height);
-		if (isTrigger(KEY_ENTER)) {
+		clear(50, 0, 0);  
+		fill(200, 0, 0);
+		textSize(150);
+		text("YOU LOSE", 700, 400);
+		fill(255);
+		textSize(50);
+		text("タイトルに戻る:SPACE", 700, 800);
+		if (isTrigger(KEY_SPACE)) {
 			State = TITLE;
 		}
-		textSize(100);
-		text("SPACE:もう一勝負", 500, 800);
-		if (isTrigger(KEY_SPACE)) {
-			State = INIT;
-		}
 	}
-	void GAME::Draw() {
-		rectMode(CORNER);
-		clear();
-		image(backImg, 150, 0);
-		fill(0, 255, 255);
-		textSize(400);
-		text("引き分け！", 200, 500);
-		fill(0);
-		textSize(80);
-		text("Enterでタイトルに戻る", 150, height);
-		if (isTrigger(KEY_ENTER)) {
+	void GAME::Tie() {
+		clear(50, 50, 50); 
+		fill(255);
+		textSize(150);
+		text("DRAW", 800, 400);
+		fill(255);
+		textSize(50);
+		text("タイトルに戻る:SPACE", 700, 800);
+		if (isTrigger(KEY_SPACE)) {
 			State = TITLE;
 		}
-		textSize(100);
-		text("SPACE:もう一勝負", 500, 800);
-		if (isTrigger(KEY_SPACE)) {
-			State = INIT;
+	}
+	void GAME::applyEffect(int id) {
+		if (id == 12) { 
+			is_reversed_world = !is_reversed_world; 
+			playSound(hangedSnd);
+		}
+		else if (id == 0) {
+			is_reversed_world = false;
 		}
 	}
+	void GAME::updateMemory(int idx,int id) {
+		if ((float)rand() / RAND_MAX < memory_accuracy) {
+			memory[idx] = id;
+		}
+	}
+	
 }

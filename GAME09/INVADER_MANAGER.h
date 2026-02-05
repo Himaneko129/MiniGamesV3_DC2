@@ -5,7 +5,7 @@
 #include "BULLET.h"
 #include"ITEM.h"
 #include"PLAYER.h"
-
+  
 class INVADER_MANAGER {
 private:
     std::vector<INVADER> invaders;  

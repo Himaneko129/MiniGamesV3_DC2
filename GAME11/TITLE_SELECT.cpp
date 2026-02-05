@@ -251,11 +251,14 @@ namespace GAME11 {
 	}
 	bool SELECT::Go_to_PLAY() {
 		textSize(100);
-		text("PLAY", 1620, 880);
+		fill(255);
+		rect(Yoko - 250, Tate - 175, 300, 150);
 		fill(255, 255, 0);
-		rect(1620, 880, 200, 100);
+		rect(Yoko - 225, Tate - 150, 200, 100);
+		fill(0);
+		text("PLAY", Yoko - 225, Tate - 150);
 		if (isTrigger(MOUSE_LBUTTON)) {
-			if ((1620 < mouseX && mouseX < 1820) && (880 < mouseY && mouseY < 980)) {
+			if ((Yoko - 250 < mouseX && mouseX < Yoko) && (Tate-175 < mouseY && mouseY < Tate)) {
 				return true;
 			}
 			else {
@@ -266,82 +269,132 @@ namespace GAME11 {
 			false;
 		}
 	}
+	void SELECT::HOW_TO_PLAY() {
+		if (mouseY > Tate - 100 && mouseX < 850) {
+			if (isTrigger(MOUSE_LBUTTON)) {
+				if (how_to_flag) {
+					how_to_flag = false;
+				}
+				else {
+					how_to_flag = true;
+				}
+			}
+		}
+	}
 	void SELECT::SELECT_WEAPON(int num) {
 		textSize(100);
+		fill(255);
+		HOW_TO_PLAY();
+		text("HOW_TO_PLAY:CLICK", 0, Tate - 100);
+		if (how_to_flag) {
+			textSize(50);
+			text("Startを押した瞬間", Yoko / 2, (Tate / 2) - 500);
+			text("PLAY画面へ移動します", Yoko / 2, (Tate / 2) - 450);
+			text("周りに敵がスポーンするので", Yoko / 2, (Tate / 2) - 300);
+			text("それらを倒して経験値を獲得し、", Yoko / 2, (Tate / 2) - 250);
+			text("レベルを上げて", Yoko / 2, (Tate / 2) - 200);
+			text("より長く生き残ってください", Yoko / 2, (Tate / 2) - 150);
+			text("定期的に他の個体よりも", Yoko / 2, (Tate / 2));
+			text("体が大きいボス個体がスポーンします", Yoko / 2, (Tate / 2)+50);
+			text("倒すと他の個体よりも多く", Yoko / 2, (Tate / 2) + 100);
+			text("経験値を落としますが", Yoko / 2, (Tate / 2) + 150);
+			text("その分体力が多いです", Yoko / 2, (Tate / 2) + 200);
+			return;
+		}
 		if (num == 1) {
-			text("NAME:MELEE", Yoko / 2, (Tate / 2));
+			text("No.1", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:MELEE", Yoko / 2, (Tate / 2)-100);
+			text("Method:SPACE", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:4", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:5", Yoko / 2, (Tate / 2) + 200);
 			text("Range:1", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:5", Yoko / 2, (Tate / 2) + 400);	//penetrating
 		}
 		else if (num == 2) {
-			text("NAME:MOUSE", Yoko / 2, (Tate / 2));
+			text("No.2", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:MOUSE", Yoko / 2, (Tate / 2)-100);
+			text("Method:WASD", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:4", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:2", Yoko / 2, (Tate / 2) + 200);
 			text("Range:5", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:1", Yoko / 2, (Tate / 2) + 400);
 		}
 		else if (num == 3) {
-			text("NAME:RANGE", Yoko / 2, (Tate / 2));
+			text("No.3", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:RANGE", Yoko / 2, (Tate / 2)-100);
+			text("Method:Shift", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:4", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:5", Yoko / 2, (Tate / 2) + 200);
 			text("Range:2", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use3:", Yoko / 2, (Tate / 2) + 400);
 		}
 		else if (num == 4) {
-			text("NAME:GUN", Yoko / 2, (Tate / 2));
+			text("No.4", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:GUN", Yoko / 2, (Tate / 2)-100);
+			text("Method:MouseL", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:4", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:4", Yoko / 2, (Tate / 2) + 200);
 			text("Range:5", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:5", Yoko / 2, (Tate / 2) + 400);
 		}
 		else if (num == 5) {
-			text("NAME:LASER", Yoko / 2, (Tate / 2));
+			text("No.5", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:LASER", Yoko / 2, (Tate / 2)-100);
+			text("Method:MouseR", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:4", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:5", Yoko / 2, (Tate / 2) + 200);
 			text("Range:5", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:5", Yoko / 2, (Tate / 2) + 400);
 		}
 		else if (num == 6) {
-			text("NAME:BOUNCE", Yoko / 2, (Tate / 2));
+			text("No.6", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:BOUNCE", Yoko / 2, (Tate / 2)-100);
+			text("Method:Q", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:4", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:4", Yoko / 2, (Tate / 2) + 200);
 			text("Range:5", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:4", Yoko / 2, (Tate / 2) + 400);
 		}
 		else if (num == 7) {
-			text("NAME:BOOM", Yoko / 2, (Tate / 2));
+			text("No.7", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:BOOM", Yoko / 2, (Tate / 2)-100);
+			text("Method:Mouse", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:5", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:2", Yoko / 2, (Tate / 2) + 200);
 			text("Range:4", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:2", Yoko / 2, (Tate / 2) + 400);
 		}
 		else if (num == 8) {
-			text("NAME:RANDOM", Yoko / 2, (Tate / 2));
+			text("No.8", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:RANDOM", Yoko / 2, (Tate / 2)-100);
+			text("Method:E", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:5", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:3", Yoko / 2, (Tate / 2) + 200);
 			text("Range:5", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:?", Yoko / 2, (Tate / 2) + 400);
 		}
 		else if (num == 9) {
-			text("NAME:ORBIT", Yoko / 2, (Tate / 2));
+			text("No.9", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:ORBIT", Yoko / 2, (Tate / 2)-100);
+			text("Method:None", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:5", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:2", Yoko / 2, (Tate / 2) + 200);
 			text("Range:2", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:2", Yoko / 2, (Tate / 2) + 400);
 		}
 		else if (num == 10) {
-			text("NAME:MINE", Yoko / 2, (Tate / 2));
+			text("No.10", Yoko / 2, (Tate / 2) - 200);
+			text("NAME:MINE", Yoko / 2, (Tate / 2)-100);
+			text("Method:C", Yoko / 2, (Tate / 2));
 			text("MIN:1...MAX:5", Yoko / 2, (Tate / 2) + 100);
 			text("Attack:5", Yoko / 2, (Tate / 2) + 200);
 			text("Range:1", Yoko / 2, (Tate / 2) + 300);
 			text("Easy to use:1", Yoko / 2, (Tate / 2) + 400);
 		}
 		else {
-
+			text("左から武器種を", Yoko / 2, Tate / 2);
+			text("選んでクリック！", Yoko / 2, Tate / 2 + 100);
 		}
-
 	}
 	void SELECT::GET_SELECT_NUM(int num) {
 		if (!(num == 0)) {

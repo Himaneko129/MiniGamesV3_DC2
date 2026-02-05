@@ -63,10 +63,9 @@ namespace GAME13 {
 		text("EXIT", 650, 900);
 		fill(255);
 		textSize(50);
-		text("W : Å™", Yoko - 200, Tate - 150);
-		text("S : Å´", Yoko - 200, Tate - 100);
-		text("SPACE:", Yoko - 200, Tate - 50);
-		text("Decision", Yoko - 200, Tate);
+		text("W : Å™", Yoko - 250, Tate - 150);
+		text("S : Å´", Yoko - 250, Tate - 100);
+		text("SPACE:åàíË", Yoko - 250, Tate - 50);
 		if (o_pointer->point == 0) {
 			if (isTrigger(KEY_SPACE)) {
 				initmap(s_pointer);
@@ -668,10 +667,14 @@ namespace GAME13 {
 			else if (gi_pointer->go_end2_3 == 1) {
 				text("QÅFNEXT", 1010, 900);
 				if (isTrigger(KEY_Q)) {
+					gi_pointer->go_end2_1 = 0;
+					gi_pointer->go_end2_2 = 0;
 					gi_pointer->go_end2_3 = 0;
 					gi_pointer->go_end2_4 = 0;
 					g_pointer->game_state = g_pointer->END2;
 					i_pointer->knife = 0;
+					gi_pointer->have_knife_move = 0;
+					gi_pointer->go_end2 = 0;
 				}
 			}
 		}//gi_pointer->gimmick_No1
@@ -729,7 +732,7 @@ namespace GAME13 {
 		draw_map(s_pointer, p_pointer);
 		textSize(100);
 		fill(255);
-		text("TRUE_END", 100, height / 2);
+		text("GOOD_END", 100, height / 2);
 		text("ENDING3", 100, height / 2 + 100);
 		text("íEèoÇµÇΩ", 100, height / 2 + 200);
 		textSize(50);

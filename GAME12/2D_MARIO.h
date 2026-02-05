@@ -5,6 +5,7 @@ namespace GAME12 {
         struct FILE_ {
             const char* file_title = 0;
             const char* file_play = 0;
+            const char* file_play2 = 0;
             int blockImg = 0;
             int itemblockImg = 0;
             int goalblockImg = 0;
@@ -23,18 +24,24 @@ namespace GAME12 {
         struct MAP {
             char* title = 0;
             char* map = 0;
+            char* map_2 = 0;
             int title_count = 0;
             int play_count = 0;
+            int play_2_count = 0;
             int title_cols = 0;
             int play_cols = 0;
+            int play_2_cols = 0;
             int title_rows = 0;
             int play_rows = 0;
+            int play_2_rows = 0;
             int index = 0;
             int start_Cols = 0;
             int title_display_Cols = 0;
             int play_display_Cols = 0;
+            int play_2_display_Cols = 0;
             int title_end_Cols = 0;
             int play_end_Cols = 0;
+            int play_2_end_Cols = 0;
         };
         struct PLAYER {
             float player_x = 0;
@@ -65,6 +72,7 @@ namespace GAME12 {
             float worldX = 0;
             float title_endWorldX = 0;
             float play_endWorldX = 0;
+            float play_2_endWorldX = 0;
         };
         struct GAME {
             const enum {
@@ -80,23 +88,31 @@ namespace GAME12 {
         struct BLOCK b;
         struct WORLD w;
         struct GAME g;
-
     public:
+        int Select_Stage = 0;
+        ~MARIO() {
+            FILE_free(&m);
+        }
         bool Back_Scene = false;
         void assets_road(struct FILE_* f_pointer);
         void TITLE_FILE_OPEN_etc_MEMORY_ALLOCATION(struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer);
         void PLAY_FILE_OPEN_etc_MEMORY_ALLOCATION(struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer);
+        void PLAY2_FILE_OPEN_etc_MEMORY_ALLOCATION(struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer);
         void init_for_TITLE(struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void init_for_PLAY(struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
+        void init_for_PLAY2(struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void INIT(struct GAME* g_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer, struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer);
         void TITLE_gimmick(struct GAME* g_pointer, struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer, struct FILE_* f_pointer, FILE** fp_pointer);
         void TITLE_MAP_DRAW(struct FILE_* f_pointer, struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void PLAY_MAP_DRAW(struct FILE_* f_pointer, struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
+        void PLAY2_MAP_DRAW(struct FILE_* f_pointer, struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void TITLE_WORLD_SCROLL(struct GAME* g_pointer, struct WORLD* w_pointer, struct PLAYER* p_pointer);
         void PLAY_WORLD_SCROLL(struct GAME* g_pointer, struct WORLD* w_pointer, struct PLAYER* p_pointer);
+        void PLAY_2_WORLD_SCROLL(struct GAME* g_pointer, struct WORLD* w_pointer, struct PLAYER* p_pointer);
         void PLAYER_DRAW(struct FILE_* f_pointer, struct PLAYER* p_pointer);
         void PLAYER_MOVE(struct FILE_* f_pointer, struct PLAYER* p_pointer);
         void collision(struct MAP* m_pointer, struct FILE_* f_pointer, struct BLOCK* b_pointer, struct PLAYER* p_pointer, struct WORLD* w_pointer);
+        void collision2(struct MAP* m_pointer, struct FILE_* f_pointer, struct BLOCK* b_pointer, struct PLAYER* p_pointer, struct WORLD* w_pointer);
         void remain_player_potition(struct PLAYER* p_pointer);
         void JUMP_and_FALL(struct PLAYER* p_pointer);
         void Damage_gudgment(struct GAME* g_pointer, struct PLAYER* p_pointer);
@@ -104,7 +120,9 @@ namespace GAME12 {
         void GAME_OVER_Gimmick(struct GAME* g_pointer, struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void GAME_CLEAR_Gimmick(struct GAME* g_pointer, struct MAP* m_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void TITLE(struct GAME* g_pointer, struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
+        void SELECT();
         void PLAY(struct GAME* g_pointer, struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
+        void PLAY2(struct GAME* g_pointer, struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void OVER(struct GAME* g_pointer, struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void CLEAR(struct GAME* g_pointer, struct FILE_* f_pointer, struct MAP* m_pointer, FILE** fp_pointer, struct PLAYER* p_pointer, struct BLOCK* b_pointer, struct WORLD* w_pointer);
         void game_console();

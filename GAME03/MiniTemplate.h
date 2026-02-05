@@ -1,28 +1,25 @@
 #pragma once
-
+#include <array>
 #include <vector>
 #include <utility>
 
-enum DIR {
-    NONE,
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-};
-struct MiniTemplate {
-    int  cell[3][3];
-    bool canStart[3][3];
-    bool canGoal[3][3];
+enum DIR { NONE, UP, DOWN, LEFT, RIGHT };
 
-    std::vector<std::pair<int, int>> mainPath;
-    DIR arrow[3][3];
+struct MiniTemplate {
+    std::array<std::array<int, 3>, 3> cell{};   // 0=ìπ, 1=ï«
+    std::vector<std::pair<int, int>> mainPath;  // Åöin/outï˚éÆÇ≈ÇÕê∂ê¨éûÇ…çÏÇÈ
+    DIR arrow[3][3]{};
+
+    int startX = 0, startY = 0;
+    int goalX = 0, goalY = 0;
 };
 
 extern const std::vector<MiniTemplate> g_miniTemplates;
+
+void buildArrowFromPath(MiniTemplate& t);
+
 MiniTemplate rotate90(const MiniTemplate& src);
 MiniTemplate rotate180(const MiniTemplate& src);
 MiniTemplate rotate270(const MiniTemplate& src);
 MiniTemplate flipHorizontal(const MiniTemplate& src);
 std::vector<MiniTemplate> generateVariants(const MiniTemplate& base);
-

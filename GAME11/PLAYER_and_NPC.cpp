@@ -11,6 +11,8 @@ namespace GAME11 {
 		Player_Height = 45;
 		orbit_num = 2;
 		lastBulletBonusLevel = 0;
+		MAX_HP = 500;
+		HP = MAX_HP;
 	}
 	void PLAYER::RANDOM_SET() {
 		srand((unsigned int)time(0));
@@ -144,12 +146,42 @@ bullets.push_back(Bullet(x + cos(angle) * 40, y + sin(angle) * 40, 0, 0, true));
 }
 }
 */
+	void PLAYER::PLAYER_DAMAGE_and_DRAW(ENEMY* enemy) {
+		if (enemy->HP < 0)return;
+		float distX = (Yoko/2) - enemy->X;
+		float distY = (Tate/2) - enemy->Y;
+		float distance = sqrt(distX * distX + distY * distY);
+		if (distance < 40) {
+			HP-=5;
+		}
+		if (((HP / MAX_HP) * 100) <= 25) {
+			fill(255, 0, 0);
+		}
+		else if (((HP / MAX_HP) * 100) <= 50) {
+			fill(255, 255, 0);
+		}
+		else {
+			fill(0, 255, 0);
+		}
+		if (!(HP < 0)) {
+			rect(Yoko/2, (Tate/2) - 20, (HP / MAX_HP) * 50, 10);
+		}
+	}
+	bool PLAYER::JUDGE_GAME_OVER() {
+		if (HP < 0) {
+			return true;
+		}
+		return false;
+	}
 	void ENEMY::ENEMY_INIT(ENEMY* enemy) {
 		enemy->HP = 10;
 		enemy->SPEED = 1;
 		save_HP = enemy->HP;
 		save_SPEED = enemy->SPEED;
 		enemy->MAX_HP = enemy->HP;
+	}
+	void ENEMY::ENEMY_RESPORN(ENEMY* enemy) {
+		enemy->HP = 0;
 	}
 	void ENEMY::Spawn_Enemy(ENEMY* enemy) {
 		if (enemy->HP <= 0) {
@@ -314,7 +346,7 @@ NextExp = LEVEL * 20;
 	}
 	bool PLAYER_STATUS::Exp_System_for_BOSS(BOSS* boss) {
 		if (boss->HP <= 0) {
-			EXP += (100+(LEVEL * 5));
+			EXP += (100+(LEVEL * 3));
 			return true;
 		} //}
 		else return false;
@@ -416,7 +448,7 @@ NextExp = LEVEL * 20;
 		rect((Yoko / 2) - 300, 30, Bar_Width, 20);//äOòg. 
 		fill(0, 255, 0);
 		rect((Yoko / 2) - 300, 30, (float)((EXP / NextExp) * 100) * 6, 20);//íÜêg. 
-		text(((EXP / NextExp) * 100) * 6, 300, 300);
+		//text(((EXP / NextExp) * 100) * 6, 300, 300);
 		textSize(30);
 		text("Lv.", (Yoko / 2) - 410, 50);
 		text(LEVEL, (Yoko / 2) - 370, 50);
@@ -584,45 +616,54 @@ NextExp = LEVEL * 20;
 				float dy_3 = Center_3_Y - enemy->Y;
 				float dist_3 = (float)sqrt(dx_3 * dx_3 + dy_3 * dy_3);
 				if (dist_1 < (range/2) || dist_2 < (range/2) || dist_3 < (range/2)) {
-					enemy->HP -= Attack_Power;
+					enemy->HP -= Attack_Power*2;
 				}
 			}
 		}
 		rectMode(CORNER);
 	}
+	void ATTACK::Boom_Center_INIT(){
+		Center_X = Yoko / 2;
+		Center_Y = Tate / 2;
+	}
 	//ìGÇ™éÄÇ…Ç…Ç≠Ç¢èuä‘Ç†ÇË.
-	void ATTACK::Boom_Attack(ENEMY* enemy) {
+	void ATTACK::Boom_Attack(ENEMY** enemy) {
 		fill(255);
 		circle(Center_X, Center_Y, 50);
-		if (Boom_Flag == true) {
-			float dx = mouseX - Center_X;
-			float dy = mouseY - Center_Y;
+		//if (Boom_HP == true) {
+		float dx = mouseX - Center_X;
+		float dy = mouseY - Center_Y;
 
-			// ÉxÉNÉgÉãê≥ãKâª
-			float length = (float)sqrt(dx * dx + dy * dy);
-			float Vector_X = dx / length;
-			float Vector_Y = dy / length;
+		// ÉxÉNÉgÉãê≥ãKâª
+		float length = (float)sqrt(dx * dx + dy * dy);
+		float Vector_X = dx / length;
+		float Vector_Y = dy / length;
 
-			Center_X += Vector_X *= 0.1f;
-			Center_Y += Vector_Y *= 0.1f;
-			//enemy_distance and mouse_distance.
-			float dist_x = Center_X - mouseX;
-			float dist_y = Center_Y - mouseY;
-			float dist = (float)sqrt(dist_x * dist_x + dist_y * dist_y);
-			if (dist < 15 && Boom_HP == true) {
-				float distance_x = Center_X - enemy->X;
-				float distance_y = Center_Y - enemy->Y;
-				float distance = (float)sqrt(distance_x * distance_x + distance_y * distance_y);
-				if (distance < range*2) {
-					fill(255, 0, 0);
-					circle(Center_X, Center_Y, 200 * 2);
-					enemy->HP -= Attack_Power;
-					enemy->HP = 0;
+		Center_X += Vector_X *= 3.0f;
+		Center_Y += Vector_Y *= 3.0f;
+		//enemy_distance and mouse_distance.
+		float dist_x = Center_X - mouseX;
+		float dist_y = Center_Y - mouseY;
+		float dist = (float)sqrt(dist_x * dist_x + dist_y * dist_y);
+		if (Boom_HP == true) {
+			if (dist < 15) {
+				for (int i = 0; i < 50; i++) {
+					float distance_x = Center_X - enemy[i]->X;
+					float distance_y = Center_Y - enemy[i]->Y;
+					float distance = (float)sqrt(distance_x * distance_x + distance_y * distance_y);
+					Boom_HP = false;
+					if (distance < range * 2) {
+						Boom_HP_for_BOSS = true;
+						fill(255, 0, 0);
+						circle(Center_X, Center_Y, 200 * 2);
+						enemy[i]->HP -= Attack_Power;
+						//enemy->HP = 0;
+					}
 				}
 			}
-			else {
-				Boom_HP = true;
-			}
+		}
+		if (15 < dist) {
+			Boom_HP = true;
 		}
 	}
 	void ATTACK::Boom_HP_Flag_False() {
@@ -937,9 +978,7 @@ NextExp = LEVEL * 20;
 				MINE_damege_Flag = true;
 				return true;
 			}
-			else {
 				return false;
-			}
 		}
 	}
 	void BULLET::MINE_damege(ENEMY* enemy[]) {
@@ -960,6 +999,6 @@ NextExp = LEVEL * 20;
 		MINE_damege_Flag = false;
 	}
 	void PLAYER::DEBUG_TEXT() {
-		text(orbit_num, 500, 100);
+		//text(orbit_num, 500, 100);
 	}
 }

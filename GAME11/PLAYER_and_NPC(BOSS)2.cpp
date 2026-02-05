@@ -72,7 +72,7 @@ namespace GAME11 {
 				enemy->Y += (((dy / dist) * SPEED) / 2)+Player_Y;
 				*/
 				fill(0);
-				text((((dX / dist) * boss->SPEED) / 0.5f), 300, 800);
+				//text((((dX / dist) * boss->SPEED) / 0.5f), 300, 800);
 				boss->X += (((dX / dist) * boss->SPEED) / 0.5f);
 				boss->Y += (((dy / dist) * boss->SPEED) / 0.5f);
 				if (isPress(KEY_W)) { boss->Y -= -3; }
@@ -82,12 +82,37 @@ namespace GAME11 {
 			}
 		}
 	}
+	void PLAYER::PLAYER_DAMAGE_and_DRAW_for_BOSS(BOSS* boss) {
+		if (boss->HP < 0)return;
+
+	    float distX = (Yoko/2) - boss->X;
+		float distY = (Tate/2) - boss->Y;
+		float distance = sqrt(distX * distX + distY * distY);
+		if (distance < 140) {
+			HP -= 20;
+		}
+		/*
+		if (((HP / MAX_HP) * 100) <= 25) {
+			fill(255, 0, 0);
+		}
+		else if (((HP / MAX_HP) * 100) <= 50) {
+			fill(255, 255, 0);
+		}
+		else {
+			fill(0, 255, 0);
+		}
+		if (!(HP < 0)) {
+			rect(Yoko / 2, (Tate / 2) - 20, (HP / MAX_HP) * 50, 10);
+		}
+		*/
+
+	}
 	void BOSS::DRAW_BOSS(BOSS* boss) {
 		DRAW_BOSS_HP(boss);
 		fill(0, 255, 0);
-		text(boss->BOSS_Spawn_Flag, 300, 500);
-		text(boss->Spawn_time, 300, 600);
-		text(boss->Spawn_Count, 300, 700);
+		//text(boss->BOSS_Spawn_Flag, 300, 500);
+		//text(boss->Spawn_time, 300, 600);
+		//text(boss->Spawn_Count, 300, 700);
 		if (boss->BOSS_Spawn_Flag == false) {
 			if (rand() % 30 == 0) {
 				if (rand() % (30 / 2) == 0) {
@@ -120,7 +145,7 @@ namespace GAME11 {
 			rect((Yoko / 2) - 150, Tate - 30, (boss->HP / boss->MAX_HP) * 300, 20);
 		}
 		fill(0);
-		text((HP / MAX_HP) * 100, 300, 400);
+		//text((HP / MAX_HP) * 100, 300, 400);
 	}
 	void BOSS::BOSS_LEVELUP(BOSS* boss) {
 		boss->boss_Level++;
@@ -284,39 +309,38 @@ namespace GAME11 {
 	}
 	//ìGÇ™éÄÇ…Ç…Ç≠Ç¢èuä‘Ç†ÇË.
 	void ATTACK::Boom_Attack_BOSS(BOSS* boss) {
-		fill(255);
-		circle(Center_X, Center_Y, 50);
-		if (Boom_Flag == true) {
-			float dx = mouseX - Center_X;
-			float dy = mouseY - Center_Y;
+		//fill(255);
+		//circle(Center_X, Center_Y, 50);
+	//	if (Boom_HP == true) {
+		float dx = mouseX - Center_X;
+		float dy = mouseY - Center_Y;
 
-			// ÉxÉNÉgÉãê≥ãKâª
-			float length = (float)sqrt(dx * dx + dy * dy);
-			float Vector_X = dx / length;
-			float Vector_Y = dy / length;
+		// ÉxÉNÉgÉãê≥ãKâª
+		float length = (float)sqrt(dx * dx + dy * dy);
+		float Vector_X = dx / length;
+		float Vector_Y = dy / length;
 
-			Center_X += Vector_X *= 0.1f;
-			Center_Y += Vector_Y *= 0.1f;
+		//	Center_X += Vector_X *= 0.1f;
+			//Center_Y += Vector_Y *= 0.1f;
 			//enemy_distance and mouse_distance.
-			float dist_x = Center_X - mouseX;
-			float dist_y = Center_Y - mouseY;
-			float dist = (float)sqrt(dist_x * dist_x + dist_y * dist_y);
-			if (dist < 15 && Boom_HP == true) {
+		float dist_x = Center_X - mouseX;
+		float dist_y = Center_Y - mouseY;
+		float dist = (float)sqrt(dist_x * dist_x + dist_y * dist_y);
+		if (Boom_HP_for_BOSS == true) {
+		//	if (dist < 15) {
 				float distance_x = Center_X - boss->X;
 				float distance_y = Center_Y - boss->Y;
 				float distance = (float)sqrt(distance_x * distance_x + distance_y * distance_y);
-				//Boom_HP = false;
+				Boom_HP_for_BOSS = false;
 				if (distance < (range * 2) * 2) {
 					fill(255, 0, 0);
 					circle(Center_X, Center_Y, 200 * 2);
 					boss->HP -= Attack_Power;
-					boss->HP = 0;
+				//	boss->HP = 0;
 				}
-			}
-			else {
-				Boom_HP = true;
-			}
+			//}
 		}
+		//}
 	}
 
 	void ATTACK::Mouse_Attack_BOSS(BOSS* boss) {
@@ -491,7 +515,7 @@ namespace GAME11 {
 			float dist = (float)sqrt(dist_x * dist_x + dist_y * dist_y);
 			fill(0, 0, 255);
 			circle(Bullet_X, Bullet_Y, 30 * 2);
-			if (dist < 30 && HP == true) {
+			if (dist < 150 && HP == true) {
 				MINE_damege_Flag = true;
 				return true;
 			}

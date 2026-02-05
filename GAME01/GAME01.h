@@ -14,13 +14,12 @@ namespace GAME01
         GAME(class MAIN* main) :GAME_BASE(main) {};
         ~GAME() {};
         int create();
-        int file();
         void proc();
-        void counter();
         void destroy();
         void draw();
         MATH* math();
         KANJI* kanji();
+        bool scene1;
     };
 }
 

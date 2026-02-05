@@ -34,18 +34,31 @@ namespace GAME13 {
             }
         }
     }
-    void MINESWEEPER::Text(struct GAME* g_pointer, struct NUMBER* n_pointer) {
+    void MINESWEEPER::Text(struct GAME* g_pointer, struct NUMBER* n_pointer, struct SELECT_PLAYER* s_pointer) {
         textSize(100);
         fill(255);
         if (g_pointer->game_state == g_pointer->SELECT) {
             fill(125);
             rect(1150, 50, 750, 550);
             fill(255);
-            text("  W   :  ↑", 1200, 150);
-            text("A S D :←↓→", 1200, 250);
-            text("   難易度", 1200, 500);
-            text(" ←低：高→", 1200, 600);
-            text("Enter : TITLE", 1200, 1080);
+            text("Q:詳しく", 0, Tate);
+            if (s_pointer->Quest_Flag) {
+                textSize(50);
+                text("?×?マス", 1200, 150);
+                text("?マスに一つ地雷", 1200,250);
+                text("?マスに一つ開ける", 1200, 350);
+                text("Playまでカーソルを", 1200, 500);
+                text("合わせてSpaceで開始", 1200, 550);
+                textSize(100);
+                text("Enter : TITLE", 1200, 1080);
+            }
+            else {
+                text("  W   :  ↑", 1200, 150);
+                text("A S D :←↓→", 1200, 250);
+                text("   難易度", 1200, 500);
+                text(" ←低：高→", 1200, 600);
+                text("Enter : TITLE", 1200, 1080);
+            }
         }
         textSize(100);
         fill(255);
@@ -57,9 +70,9 @@ namespace GAME13 {
             text(n_pointer->input_level, height + 500, 200);
             text("  W   :  ↑", height + 100, 400);
             text("A S D :←↓→", height + 100, 500);
-            text("Press E : DASH", height + 100, 700);
-            text("Press Q :", height + 100, 800);
-            text(": PREDICTION", height + 100, 900);
+            text("SPACE : 決定", height + 100, 700);
+            text("Press E : DASH", height + 100, 800);
+            text("Press Q :　予想", height + 100, 900);
             text("Enter : TITLE", 1200, 1080);
         }
         textSize(100);
@@ -76,17 +89,24 @@ namespace GAME13 {
             text("Press_SPACE", height + 150, 700);
             text("Restart", height + 150, 900);
         }
-
     }
     void MINESWEEPER::SELECT(struct GAME* g_pointer, struct BLOCK* b_pointer, struct NUMBER* n_pointer, struct PLAYER* p_pointer, struct SELECT_PLAYER* s_pointer) {
         clear(0);
-        Text(g_pointer, n_pointer);
+        Text(g_pointer, n_pointer,s_pointer);
         textSize(100);
         if (isTrigger(KEY_W)) { s_pointer->select_state -= 1; }
         if (isTrigger(KEY_S)) { s_pointer->select_state += 1; }
         s_pointer->select_state %= 4;
         if (s_pointer->select_state == -1) {
             s_pointer->select_state = 3;
+        }
+        if (isTrigger(KEY_Q)) {
+            if (s_pointer->Quest_Flag == true) {
+                s_pointer->Quest_Flag = false;
+            }
+            else {
+                s_pointer->Quest_Flag = true;
+            }
         }
         if (s_pointer->select_state == s_pointer->SELECT_ROW) {
             text("→Select Row", 200, 200);
@@ -106,10 +126,14 @@ namespace GAME13 {
                 n_pointer->input_level -= 1;
             }
             text(n_pointer->input_level, 950, 400);
-            text("Disclose", 200, 600);
+            text("Cell-Open", 200, 600);
             n_pointer->input_disclose = n_pointer->input_Row;
-            text(n_pointer->input_disclose, 950, 600);
-            fill(255);
+            if (s_pointer->Disclose_Flag) {
+                text(n_pointer->input_disclose, 950, 600);
+            }
+            else {
+                text("None", 950, 600);
+            }            fill(255);
             rect((width / 2) - 300, height - 400, 600, 200);
             fill(0);
             // text("Press_SPACE", (width / 2) - 275, height - 300);
@@ -132,9 +156,13 @@ namespace GAME13 {
                 n_pointer->input_level++;
             }
             text(n_pointer->input_level, 950, 400);
-            text("Disclose", 200, 600);
-            text(n_pointer->input_disclose, 950, 600);
-            fill(255);
+            text("Cell-Open", 200, 600);
+            if (s_pointer->Disclose_Flag) {
+                text(n_pointer->input_disclose, 950, 600);
+            }
+            else {
+                text("None", 950, 600);
+            }            fill(255);
             rect((width / 2) - 300, height - 400, 600, 200);
             fill(0);
             //text("Press_SPACE", (width / 2) - 275, height - 300);
@@ -147,11 +175,14 @@ namespace GAME13 {
             text(n_pointer->input_Row, 950, 200);
             text("Select Level", 200, 400);
             text(n_pointer->input_level, 950, 400);
-            text("→Disclose", 200, 600);
+            text("→Cell-Open", 200, 600);
             if (isTrigger(KEY_D)) { n_pointer->input_disclose++; }
             if (isTrigger(KEY_A)) { n_pointer->input_disclose--; }
             if (n_pointer->input_disclose > n_pointer->input_Row + 1) {
-                n_pointer->input_disclose--;
+                n_pointer->input_disclose=2;
+            }
+            if (n_pointer->input_disclose <= 1) {
+                n_pointer->input_disclose = n_pointer->input_Row+1;
             }
             if (n_pointer->input_disclose < n_pointer->input_Row+1) {
                 s_pointer->Disclose_Flag = true;
@@ -159,10 +190,12 @@ namespace GAME13 {
             else {
                 s_pointer->Disclose_Flag = false;
             }
-            if (n_pointer->input_disclose <= 1) {
-                n_pointer->input_disclose = n_pointer->input_Row;
+            if (s_pointer->Disclose_Flag) {
+                text(n_pointer->input_disclose, 950, 600);
             }
-            text(n_pointer->input_disclose, 950, 600);
+            else {
+                text("None", 950, 600);
+            }
             n_pointer->Start_Not_Mine = n_pointer->input_disclose;
             fill(255);
             rect((width / 2) - 300, height - 400, 600, 200);
@@ -179,9 +212,13 @@ namespace GAME13 {
             text("Select Level", 200, 400);
             text(n_pointer->input_level, 950, 400);
             fill(255);
-            text("Disclose", 200, 600);
-            text(n_pointer->input_disclose, 950, 600);
-            rect((width / 2) - 300, height - 400, 600, 200);
+            text("Cell-Open", 200, 600);
+            if (s_pointer->Disclose_Flag) {
+                text(n_pointer->input_disclose, 950, 600);
+            }
+            else {
+                text("None", 950, 600);
+            }            rect((width / 2) - 300, height - 400, 600, 200);
             fill(0);
             text("Press_SPACE", (width / 2) - 275, height - 300);
             text("Play", (width / 2) - 100, height - 200);
@@ -483,13 +520,13 @@ namespace GAME13 {
             }
         }
     }
-    void MINESWEEPER::PLAY(struct GAME* g_pointer, struct BLOCK* b_pointer, struct NUMBER* n_pointer, struct PLAYER* p_pointer) {
+    void MINESWEEPER::PLAY(struct GAME* g_pointer, struct BLOCK* b_pointer, struct NUMBER* n_pointer, struct PLAYER* p_pointer, struct SELECT_PLAYER* s_pointer) {
         serect_block(b_pointer, n_pointer, p_pointer);
         Push_Block(g_pointer, b_pointer, n_pointer, p_pointer);
         clear_decision(g_pointer, b_pointer, n_pointer, p_pointer);
         clear(0);
         stage_draw(b_pointer, n_pointer, p_pointer);
-        Text(g_pointer, n_pointer);
+        Text(g_pointer, n_pointer,s_pointer);
         Debug_text(g_pointer, b_pointer, n_pointer, p_pointer);
     }
     void MINESWEEPER::Game_finish_stage_draw(struct BLOCK* b_pointer, struct NUMBER* n_pointer, struct PLAYER* p_pointer) {
@@ -529,7 +566,7 @@ namespace GAME13 {
     }
     void MINESWEEPER::OVER(struct GAME* g_pointer, struct BLOCK* b_pointer, struct NUMBER* n_pointer, struct PLAYER* p_pointer, struct SELECT_PLAYER* s_pointer) {
         clear(0);
-        Text(g_pointer, n_pointer);
+        Text(g_pointer, n_pointer,s_pointer);
         Game_finish_stage_draw(b_pointer, n_pointer, p_pointer);
         if (isTrigger(KEY_SPACE)) {
             INIT_stage(b_pointer, n_pointer, p_pointer, s_pointer);
@@ -538,7 +575,7 @@ namespace GAME13 {
     }
     void MINESWEEPER::CLEAR(struct GAME* g_pointer, struct BLOCK* b_pointer, struct NUMBER* n_pointer, struct PLAYER* p_pointer, struct SELECT_PLAYER* s_pointer) {
         clear(0);
-        Text(g_pointer, n_pointer);
+        Text(g_pointer, n_pointer,s_pointer);
         Game_finish_stage_draw(b_pointer, n_pointer, p_pointer);
         if (isTrigger(KEY_SPACE)) {
             INIT_stage(b_pointer, n_pointer, p_pointer, s_pointer);
@@ -568,7 +605,7 @@ namespace GAME13 {
             }
         }
         else if (game.game_state == game.PLAY) {
-            PLAY(&game, block, &number, &player);
+            PLAY(&game, block, &number, &player,&select);
             if (isTrigger(KEY_ENTER)) {
                 game.game_state = game.TITLE;
             }

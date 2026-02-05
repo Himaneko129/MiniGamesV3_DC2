@@ -65,7 +65,7 @@ namespace GAME05 {
     }
 
     void MAP2::MAP2WORLD_SCROLL() {
-        worldX += 4;
+        worldX += 8;
         if (worldX >= endWorldX) {
             worldX = endWorldX;
         }

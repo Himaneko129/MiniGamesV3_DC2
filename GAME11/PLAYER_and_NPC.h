@@ -23,8 +23,8 @@ namespace GAME11 {
 		bool LevelUp_Flag = false;
 	protected:
 		int LEVEL = 0;
-		long float EXP = 0;
-		long float NextExp = 0;
+		double EXP = 0;
+		double NextExp = 0;
 		float Bar_Width = 0;
 	public:
 		void STATUS_INIT();
@@ -57,6 +57,7 @@ namespace GAME11 {
 		bool Bounce_Flag = false;
 		bool Boom_Flag = false;
 		bool Boom_HP = false;
+		bool Boom_HP_for_BOSS = false;
 		bool Random_Flag = false;
 		bool Orbit_Flag = false;
 		bool MINE_Flag = false;
@@ -67,7 +68,8 @@ namespace GAME11 {
 		void Range_Attack(ENEMY* enemy);
 		void Mouse_Attack(ENEMY* enemy);
 		void Mouse_damege(ENEMY enemy[]);
-		void Boom_Attack(ENEMY* enemy);
+		void Boom_Attack(ENEMY** enemy);
+		void Boom_Center_INIT();
 		void Melee_Attack_BOSS(BOSS* boss);
 		void Range_Attack_BOSS(BOSS* boss);
 		void Mouse_Attack_BOSS(BOSS* boss);
@@ -155,6 +157,8 @@ namespace GAME11 {
 		void Like_a_BUG(int percent, int color, int pattern);
 		void Player_MOVE();
 		void Player_DRAW();
+		void PLAYER_DAMAGE_and_DRAW(ENEMY* enemy);
+		void PLAYER_DAMAGE_and_DRAW_for_BOSS(BOSS* boss);
 		float Distance(float x1, float y1, float x2, float y2);
 		void Player_Angle_Change();
 		void LEVEL_UP();
@@ -167,6 +171,7 @@ namespace GAME11 {
 		void ORBIT_BULLET_PLUS(int num);
 		int ORBIT_NUM_return();
 		void DEBUG_TEXT();
+		bool JUDGE_GAME_OVER();
 	};
 
 	class ENEMY : public CHARACTER {
@@ -185,6 +190,7 @@ namespace GAME11 {
 		void DRAW_ENEMY(ENEMY* enemy);
 		void Despone(ENEMY* enemy, bool flag);
 		void ENEMY_LEVELUP(ENEMY* enemy);
+		void ENEMY_RESPORN(ENEMY* enemy);
 	};
 	class BOSS :public ENEMY {
 	protected:

@@ -133,18 +133,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bullet.cpp" />
-    <ClCompile Include="ebullet.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="GAME04.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="STEP.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bullet.h" />
-    <ClInclude Include="ebullet.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="GAME04.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="STEP.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\MAIN\assets\game04\title.txt" />

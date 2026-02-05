@@ -146,8 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\MAIN\assets\game01\title.txt" />
-    <Text Include="playcount.txt" />
-    <Text Include="score.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

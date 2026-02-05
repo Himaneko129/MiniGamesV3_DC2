@@ -3,6 +3,7 @@
 
 namespace GAME08
 {
+    // 駒の種類
     enum PieceType {
         NONE = 0,
         PAWN,
@@ -13,23 +14,33 @@ namespace GAME08
         KING
     };
 
+    // 駒の色
     enum PieceColor {
         WHITE = 0,
         BLACK,
         NONE_COLOR
     };
 
+    // 駒クラス
     class Piece {
     public:
         PieceType type;
         PieceColor color;
+        bool hasMoved; // キャスリング用
 
         // 空マス用コンストラクタ
-        Piece() : type(NONE), color(NONE_COLOR) {}
+        Piece() : 
+            type(NONE),
+            color(NONE_COLOR), 
+            hasMoved(false)
+        {}
 
         // 通常駒用
         Piece(PieceType t, PieceColor c)
-            : type(t), color(c) {}
+            : type(t),
+            color(c), 
+            hasMoved(false)
+        {}
 
         bool isEmpty() const {
             return type == NONE;

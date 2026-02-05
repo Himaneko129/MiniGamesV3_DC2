@@ -9,10 +9,13 @@ namespace GAME01 {
 	void MATH::game()    /*ランダム数読み込み→計算*/
 	{
 		clear(0, 0, 64);
+		textSize(75);
+		fill(0, 255, 0);
+		text("計算問題モード＞＞＞＞＞＞", 20, 100);
 		textSize(55);
 		fill(255, 255, 255);
 		text("モードを選んでください。※「」内のキーを入力すると進みます。",20, 200);
-		text("[＜]キーでメニューに戻る", 90, 1000);
+		text("[←]キーでメニューに戻る", 90, 1000);
 		fill(0, 0, 255);
 		rect(10, 400, 370, 200);
 		fill(0, 255, 0);
@@ -46,7 +49,10 @@ namespace GAME01 {
 		clear(0, 0, 64);
 		textSize(80);
 		text("答えを入力してください。SPACEで確定。", 20, 200);
-		text("※[＜]キーでいったんメニューに戻る※", 20, 700);
+		textSize(55);
+		text("【　[←]キーで中断", 90, 1000);
+		text("[↓]キーで1文字削除　】", 700, 1000);
+		textSize(80);
 		fill(255, 255, 0);
 		text(Ma, 620, 100);
 		text("+", 730, 100);
@@ -70,7 +76,10 @@ namespace GAME01 {
 		clear(0, 0, 64);
 		textSize(80);
 		text("答えを入力してください。SPACEで確定。", 20, 200);
-		text("※[＜]キーでいったんメニューに戻る※", 20, 700);
+		textSize(55);
+		text("【　[←]キーで中断", 90, 1000);
+		text("[↓]キーで1文字削除　】", 700, 1000);
+		textSize(80);
 		if (Mc > Md) {
 			fill(255, 255, 0);
 			text(Mc, 620, 100);
@@ -99,7 +108,10 @@ namespace GAME01 {
 		clear(0, 0, 64);
 		textSize(80);
 		text("答えを入力してください。SPACEで確定。", 20, 200);
-		text("※[＜]キーでいったんメニューに戻る※", 20, 700);
+		textSize(55);
+		text("【　[←]キーで中断", 90, 1000);
+		text("[↓]キーで1文字削除　】", 700, 1000);
+		textSize(80);
 		fill(255, 255, 0);
 		text(Me, 620, 100);
 		text("×", 730, 100);
@@ -108,18 +120,20 @@ namespace GAME01 {
 		text("？", 1060, 100);
 	}
 	void MATH::anser4() {
-		/*四則演算[最大2桁÷2桁](〇÷〇)*/
+		/*四則演算[最大3桁÷2桁](〇÷〇)Mgが0になる対策　答えが0になりすぎないように*/
 		if (!anser4Generated) {
-			Mg = random() % 100;
-			Mh = random() % 100;
+			Mg = random() % 150 + 1;
+			Mh = random() % 20 + 1;
 			Manser4 = Mg / Mh;
 			anser4Generated = true;
 		}
 		clear(0, 0, 64);
 		textSize(60);
 		text("答えを入力してください(商のみで可)。SPACEで確定。", 20, 200);
+		textSize(55);
+		text("【　[←]キーで中断", 90, 1000);
+		text("[↓]キーで1文字削除　】", 700, 1000);
 		textSize(80);
-		text("※[＜]キーでいったんメニューに戻る※", 20, 700);
 		fill(255, 255, 0);
 		text(Mg, 620, 100);
 		text("÷", 730, 100);
@@ -138,7 +152,9 @@ namespace GAME01 {
 		clear(0, 0, 64);
 		textSize(80);
 		text("答えを入力してください。SPACEで確定。", 20, 200);
-		text("※[＜]キーでいったんメニューに戻る※", 20, 700);
+		textSize(55);
+		text("【　[←]キーで中断", 90, 1000);
+		text("[↓]キーで1文字削除　】", 700, 1000);
 		textSize(60);
 		fill(255, 255, 0);
 		text(Mi, 620, 100);
@@ -163,7 +179,9 @@ namespace GAME01 {
 		clear(0, 0, 64);
 		textSize(80);
 		text("答えを入力してください。SPACEで確定。", 20, 200);
-		text("※[＜]キーでいったんメニューに戻る※", 20, 700);
+		textSize(55);
+		text("【　[←]キーで中断", 90, 1000);
+		text("[↓]キーで1文字削除　】", 700, 1000);
 		if (Mk > Ml) {
 			fill(255, 255, 0);
 			text(Mk, 570, 100);
@@ -253,7 +271,12 @@ namespace GAME01 {
 			m1->anser1();
 			key();
 			if (isTrigger(KEY_LEFT)) {
+				inputStrA[0] = '\0';
+				inputLenA = 0;
+				answerChecked = false;
+				answerCorrect = false;
 				cont = 1;
+				select1 = 0;
 			}
 			if (!answerChecked) {
 				if (isTrigger(KEY_SPACE)) {
@@ -277,6 +300,11 @@ namespace GAME01 {
 					text("不正解！", 700, 400);
 					text("Shiftでメニューに戻る", 700, 500);
 					text("Enterで次の問題へ", 700, 600);
+					/*if (select1 = 1) {
+						text("答えは", 1000, 400);
+						text(Manser, 1300, 400);
+						text("です", 1500, 400);
+					}*/
 				}
 
 				if (isTrigger(KEY_ENTER)) { //正解
@@ -300,7 +328,12 @@ namespace GAME01 {
 			m2->anser2();
 			key();
 			if (isTrigger(KEY_LEFT)) {
+				inputStrA[0] = '\0';
+				inputLenA = 0;
+				answerChecked = false;
+				answerCorrect = false;
 				cont = 1;
+				select1 = 0;
 			}
 			if (!answerChecked) {
 				if (isTrigger(KEY_SPACE)) {
@@ -347,7 +380,12 @@ namespace GAME01 {
 			m3->anser3();
 			key();
 			if (isTrigger(KEY_LEFT)) {
+				inputStrA[0] = '\0';
+				inputLenA = 0;
+				answerChecked = false;
+				answerCorrect = false;
 				cont = 1;
+				select1 = 0;
 			}
 			if (!answerChecked) {
 				if (isTrigger(KEY_SPACE)) {
@@ -394,7 +432,12 @@ namespace GAME01 {
 			m4->anser4();
 			key();
 			if (isTrigger(KEY_LEFT)) {
+				inputStrA[0] = '\0';
+				inputLenA = 0;
+				answerChecked = false;
+				answerCorrect = false;
 				cont = 1;
+				select1 = 0;
 			}
 			if (!answerChecked) {
 				if (isTrigger(KEY_SPACE)) {
@@ -440,7 +483,12 @@ namespace GAME01 {
 			m5->anser5();
 			key();
 			if (isTrigger(KEY_LEFT)) {
+				inputStrA[0] = '\0';
+				inputLenA = 0;
+				answerChecked = false;
+				answerCorrect = false;
 				cont = 1;
+				select1 = 0;
 			}
 			if (!answerChecked) {
 				if (isTrigger(KEY_SPACE)) {
@@ -486,7 +534,12 @@ namespace GAME01 {
 			m6->anser6();
 			key();
 			if (isTrigger(KEY_LEFT)) {
+				inputStrA[0] = '\0';
+				inputLenA = 0;
+				answerChecked = false;
+				answerCorrect = false;
 				cont = 1;
+				select1 = 0;
 			}
 			if (!answerChecked) {
 				if (isTrigger(KEY_SPACE)) {
@@ -534,6 +587,14 @@ namespace GAME01 {
 		fill(255, 255, 255);
 	}
 	void MATH::key() {
+		//1文字削除（KEY_DOWN）
+		if (isTrigger(KEY_DOWN)) {
+			if (inputLenA > 0) {
+				inputLenA--;
+				inputStrA[inputLenA] = '\0';
+			}
+			return;
+		}
 		if (inputLenA < 31) {
 			if (isTrigger2(KEY_0)) { inputStrA[inputLenA++] = '0'; }
 			else if (isTrigger2(KEY_1)) { inputStrA[inputLenA++] = '1'; }

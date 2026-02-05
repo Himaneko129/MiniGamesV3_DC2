@@ -62,7 +62,7 @@ namespace GAME11
 			//textMode(TOP);
 			textSize(50);
 			fill(255, 255, 0);
-			text("GAME05", 0, 100);
+			//text("GAME05", 0, 100);
 			fill(255);
 			text("ENTERキーでメニューに戻る", 0, 1080);
 			if (isTrigger(KEY_ENTER)) {
@@ -78,24 +78,25 @@ namespace GAME11
 		if (game_scene->game_state == game_scene->OPTION) {
 			clear(0);
 			textSize(100);
-			textMode(TOP);
+			//textMode(TOP);
 			text("OPTION", 0, 0);
 			text("E : EXIT", 0, Tate - 100);
 			if (isTrigger(KEY_E)) {
 				game_scene->game_state = game_scene->TITLE;
 			}
-			textMode(TOP);
+			//textMode(TOP);
 		}
 		if (game_scene->game_state == game_scene->SELECT) {
 			clear(0);
+			textMode(TOP);
 			//セレクトキャラクター.
 			select->SELECT_SELECT_CHARA();
 			if (isTrigger(MOUSE_LBUTTON)) {
 				select->GET_SELECT_NUM(select->SELECT_SELECT_CHARA());
 			}
 			select->SELECT_WEAPON(select->OUT_SELECT_NUM());
-			textSize(500);
-			text(select->SELECT_SELECT_CHARA(), Yoko / 2, 500);
+			//textSize(500);
+			//text(select->SELECT_SELECT_CHARA(), Yoko / 2, 500);
 			select->SELECT_DRAW(select->SELECT_SELECT_CHARA());
 			if (select->Go_to_PLAY() == true) {
 				if (select->OUT_SELECT_NUM() == 1) {
@@ -125,6 +126,7 @@ namespace GAME11
 				else if (select->OUT_SELECT_NUM() == 7) {
 					player->attack->Flag_INIT();
 					player->attack->Boom_Flag = true;
+					player->attack->Boom_Center_INIT();
 				}
 				else if (select->OUT_SELECT_NUM() == 8) {
 					player->attack->Flag_INIT();
@@ -168,8 +170,11 @@ namespace GAME11
 				}
 				game_scene->game_state = game_scene->PLAY;
 				boss->BOSS_Spawn_Flag = true;
+				player->Player_INIT();
+				for (int i = 0; i < 50; i++) {
+					enemy[i]->ENEMY_RESPORN(enemy[i]);
+				}
 			}
-
 		}
 		if (game_scene->game_state == game_scene->PLAY) {
 			clear(0);
@@ -226,9 +231,9 @@ namespace GAME11
 				if (player->attack->Mouse_Flag == true) {
 					player->attack->Mouse_Attack(enemy[i]);
 				}
-				if (player->attack->Boom_Flag == true) {
-					player->attack->Boom_Attack(enemy[i]);
-				}
+			}
+			if (player->attack->Boom_Flag == true) {
+				player->attack->Boom_Attack(enemy);
 			}
 			if (boss->BOSS_Spawn_Flag == false) {
 				if (player->attack->Melee_Flag == true) {
@@ -245,7 +250,7 @@ namespace GAME11
 				}
 				//player->attack->Boom_HP_Flag_False();
 			}
-			player->attack->Boom_HP_Flag_False();
+			//player->attack->Boom_HP_Flag_False();
 
 			if (player->attack->Long_Range_Flag == true) {
 				for (int i = 0; i < 32; i++) {
@@ -320,27 +325,30 @@ namespace GAME11
 			for (int i = 0; i < 50; i++) {
 				enemy[i]->DRAW_ENEMY(enemy[i]);
 				enemy[i]->DRAW_ENEMY_HP(enemy[i]);
+				player->PLAYER_DAMAGE_and_DRAW(enemy[i]);
 			}
 			boss->DRAW_BOSS(boss);
-			for (int i = 0; i < 50; i++) {
-				if (boss->BOSS_Spawn_Flag == false) {
-					if (player->player_status->Exp_System_for_BOSS(boss) == true) {
-						boss->BOSS_LEVELUP(boss);
-						/*
-						for (int i = 0; i < 50; i++) {
-						}
-						*/
-						enemy[i]->ENEMY_LEVELUP(enemy[i]);
-					}
-				}
-				if (player->player_status->Exp_System(enemy[i]) == true) {
-					player->player_status->Set_LEVELUP_Flag(true);
-					//player->player_status->LEVELUP_Flag();
-				}
-				if (player->player_status->LEVELUP_Flag() == true) {
-					player->LEVEL_UP();
+			player->PLAYER_DAMAGE_and_DRAW_for_BOSS(boss);
+			if (boss->BOSS_Spawn_Flag == false) {
+				if (player->player_status->Exp_System_for_BOSS(boss) == true) {
+					boss->BOSS_LEVELUP(boss);
 				}
 			}
+			for (int i = 0; i < 50; i++) {
+				if (player->player_status->Exp_System(enemy[i])) {
+					enemy[i]->ENEMY_LEVELUP(enemy[i]);
+				}
+			} 
+			/*
+			if (player->player_status->Exp_System(enemy[i]) == true) {
+				player->player_status->Set_LEVELUP_Flag(true);
+				//player->player_status->LEVELUP_Flag();
+			}
+			*/
+			if (player->player_status->LEVELUP_Flag() == true) {
+				player->LEVEL_UP();
+			}
+
 			if (player->player_status->LEVELUP_Flag() == true) {
 				player->LEVEL_UP_STATUS();
 				player->player_status->Set_LEVELUP_Flag(false);
@@ -388,9 +396,29 @@ namespace GAME11
 			if (isTrigger(KEY_ENTER)) {
 				main()->backToMenu();
 			}
-
+			if (player->JUDGE_GAME_OVER()) {
+				game_scene->game_state = game_scene->GAMEOVER;
+			}
 		}
-
+		if (game_scene->game_state == game_scene->GAMEOVER) {
+			clear(0);
+			if (isTrigger(KEY_ENTER)) {
+				main()->backToMenu();
+			}
+			map->MOVE_CAMERA(player);
+			for (int i = 0; i < 50; i++) {
+				enemy[i]->DRAW_ENEMY(enemy[i]);
+				enemy[i]->DRAW_ENEMY_HP(enemy[i]);
+			}
+			fill(0);
+			textSize(100);
+			text("GAME_OVER!", 200, 200);
+			text("_RESTART_", 200, 350);
+			text("Press_SPACE", 200, 500);
+			if (isTrigger(KEY_SPACE)) {
+				game_scene->game_state = game_scene->SELECT;
+			}
+		}
 	}
 }
 //ボスを倒したら敵強くなる.

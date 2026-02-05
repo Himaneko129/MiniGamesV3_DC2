@@ -202,12 +202,13 @@ namespace GAME14 {
     bool INPUT::BACK_SCENE(int mouseX,int mouseY) {
         fill(255);
         textSize(100);
-        text("<-BACK", 0, 100);
-        if (0 < mouseX && mouseX < 300 && 0 < mouseY && mouseY && 100) {
+        if ((0 < mouseX && mouseX < 300 )&&( 0 < mouseY && mouseY < 100)) {
+            fill(255, 255, 0);
             if (isTrigger(MOUSE_LBUTTON)) {
                 inputText.clear();
             return true;
             }
         }
+        text("<-BACK", 0, 100);
     }
 }

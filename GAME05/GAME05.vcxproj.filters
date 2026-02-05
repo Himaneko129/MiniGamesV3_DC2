@@ -8,6 +8,7 @@
     <ClCompile Include="GAME_STRUCT.cpp" />
     <ClCompile Include="SELECT.cpp" />
     <ClCompile Include="STAGE2_MAP.cpp" />
+    <ClCompile Include="STAGE3_MAP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GAME05.h" />
@@ -17,6 +18,7 @@
     <ClInclude Include="TITLE.h" />
     <ClInclude Include="SELECT.h" />
     <ClInclude Include="STAGE2_MAP.h" />
+    <ClInclude Include="STAGE3_MAP.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\MAIN\assets\game05\title.txt" />

@@ -1,5 +1,7 @@
 #pragma once
 #include "../MAIN/GAME_BASE.h"
+#define TOTAL_CARDS 48
+#define ARCANA_TYPES 22
 namespace GAME07
 {
     class GAME :
@@ -14,65 +16,80 @@ namespace GAME07
     private:
         enum GameState {
             TITLE,
-            YAKU,
             INIT,
-            OYA,
-            PLAY,
+            ENEMY,
+            PLAYER,
             WIN,
             LOSE,
-            DRAW
+            DRAW,
+            TIE,
+            JUDGE,
+            JUDGE_ENEMY,
+            RULE
         };
         GameState State = TITLE;
         void Title();
-        void Yaku();
+        void Rule();
         void Init();
-        void Oya();
-        void Play();
+        void Player();
+        void Enemy();
         void Win();
         void Lose();
         void Draw();
-        int backImg;
-        int dice1Img;
-        int dice2Img;
-        int dice3Img;
-        int dice4Img;
-        int dice5Img;
-        int dice6Img;
-        int oyaImg;
-        int yakuImg;
+        void Tie();
+        void Judge();
 
-        int playerSnd;
-        int oyaSnd;
+        void applyEffect(int id);
+        void updateMemory(int idx, int id);
+        int taroturaImg;
+        int tarot0Img;
+        int tarot1Img;
+        int tarot2Img;
+        int tarot3Img;
+        int tarot4Img;
+        int tarot5Img;
+        int tarot6Img;
+        int tarot7Img;
+        int tarot8Img;
+        int tarot9Img;
+        int tarot10Img;
+        int tarot11Img;
+        int tarot12Img;
+        int tarot13Img;
+        int tarot14Img;
+        int tarot15Img;
+        int tarot16Img;
+        int tarot17Img;
+        int tarot18Img;
+        int tarot19Img;
+        int tarot20Img;
+        int tarot21Img;
 
-        int oyaDice[3];
-        int playerDice[3];
+        int tarotSnd;
+        int clearSnd;
+        int hangedSnd;
 
-        float px;
-        float py = 600;
+        int firstCardIdx = 0;    
+        int secondCardIdx = 0;   
+        int waitTimer;
+        int memory[TOTAL_CARDS];
 
-        bool oyaRolled = false;
-        bool playerRolled = false;
+        float memory_accuracy = 0.5f;//“G‚Ì‹L‰¯—Í
 
-        int oyaYaku;
-        int playerYaku;
-
-        int oyaPair;
-        int playerPair;
-        int oyaZorome;
-        int playerZorome;
-
-        
-        bool ohas1;
-        bool ohas2;
-        bool ohas3;
-        bool ohas4;
-        bool ohas5;
-        bool ohas6;
-        bool phas1;
-        bool phas2;
-        bool phas3;
-        bool phas4;
-        bool phas5;
-        bool phas6;
+        typedef enum { STATE_HIDDEN, STATE_REVEALED, STATE_TAKEN } CardState;
+        typedef enum { POS_UPRIGHT, POS_REVERSED } Position;
+        typedef struct {
+            int id;             
+            Position position;  
+            CardState state;    
+            int x, y;           
+        } Card;
+        Card board[TOTAL_CARDS];
+        int score_player = 0;
+        int score_cpu = 0;
+        bool is_reversed_world = false; 
+        int cards_remaining = TOTAL_CARDS;
+        bool is_player_turn = true;
     };
+   
 }

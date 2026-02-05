@@ -17,5 +17,7 @@ namespace GAME02
         void kakutei();
         void yotreset();
         void UI();
+        void lock();
+        void help();
     };
 }

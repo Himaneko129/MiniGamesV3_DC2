@@ -12,7 +12,7 @@ class INVADER {
 	float dir;
 	bool alive;
 	int img;
-
+	int scoreValue = 100;
 	int type;
 	int direction;
 
@@ -22,6 +22,8 @@ public:
 	void draw();
 	void moveDown();
 	void reverseDir();
+	void setScore(int s) { scoreValue = s; }
+	int getScore() const { return scoreValue; }
 	bool checkHit(float bx, float by);
 	bool isAlive() const;
 	void kill();
