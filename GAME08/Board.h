@@ -8,26 +8,55 @@ namespace GAME08
         // 定数・基本状態
         static const int SIZE = 8;
 
+        // 描画関連
+        static constexpr float CELL_SIZE = 100.0f;
+        static constexpr float BOARD_X = 200.0f;
+        static constexpr float BOARD_Y = 100.0f;
+
+        // UI表示位置
+        static constexpr float UI_X = 900.0f;
+        static constexpr float UI_Y = 100.0f;
+
+        // 中央演出用
+        int statusAnimFrame = 0;
+        bool statusAnimActive = false;
+
+        struct InputEvent {
+            bool leftClick = false;
+            bool rightClick = false;
+            int bx = -1;
+            int by = -1;
+        };
+
         Board();
 
         // メインループ
         void update();
         void draw();
 
-        // 入力・選択
-        bool hasSelection() const;
-        bool isInsideBoard(int mx, int my, int& bx, int& by);
-
         // 描画系
         void drawBoard();
-        void drawPieces();
         void drawMoveHint();
+        void drawPieces();
+        void drawHelpUI();
 
         // UI系
         void drawUI();
+
         void drawStatusText();
         void drawCheckKingHighlight();
         void drawPromotionUI();
+        void drawCenterStatusText();
+
+        // 入力・選択
+        bool hasSelection() const;
+        bool isInsideBoard(int mx, int my, int& bx, int& by);
+        InputEvent pollInput();
+
+        void handleInputEvent(const InputEvent& ev);
+        void handleSelect(const InputEvent& ev);
+        void handleAction(const InputEvent& ev);
+        void finalizeMove();
 
         // 状態表示用
         bool inCheck;
@@ -41,14 +70,14 @@ namespace GAME08
         PieceColor promotionColor;
 
     private:
-
+        int pieceImageId[3][7];
         // 盤面
         Piece squares[SIZE][SIZE];
         PieceColor currentTurn;
 
         // 選択状態
-        int selectedX = -1;
-        int selectedY = -1;
+        int selectedX;
+        int selectedY;
 
         // ヒント管理
         bool moveHint[SIZE][SIZE];        // 通常移動
@@ -56,10 +85,9 @@ namespace GAME08
         bool specialMoveHint[SIZE][SIZE]; // キャスリング・アンパッサン
 
         void clearMoveHint();
-
         void resetSelection();
 
-        // 特殊ルール用状態
+        // アンパッサン
         int enPassantX = 0;
         int enPassantY = 0;
         bool enPassantAvailable;
@@ -69,7 +97,6 @@ namespace GAME08
         bool isEmpty(int x, int y) const;
         bool isEnemy(int x, int y, PieceColor myColor) const;
 
-        // 共通移動ロジック
         bool canMoveStraight(int sx, int sy, int dx, int dy);
         bool canMoveDiagonal(int sx, int sy, int dx, int dy);
 
@@ -77,8 +104,6 @@ namespace GAME08
         void calcPawnMoveHint(int x, int y);
         bool canMovePawn(int sx, int sy, int dx, int dy);
         bool canPawnAttack(int sx, int sy, int tx, int ty);
-        bool executeEnPassant(int sx, int sy, int dx, int dy);
-        void calcEnPassantHint(int x, int y);
 
         // ルーク
         void calcRookMoveHint(int x, int y);
@@ -100,44 +125,49 @@ namespace GAME08
         void calcKingMoveHint(int x, int y);
         bool canMoveKing(int sx, int sy, int dx, int dy);
 
+        // キャスリング
         bool executeCastle(int sx, int sy, int dx, int dy);
         void moveKing(int sx, int sy, int dx, int dy);
 
         bool canCastleKingSide(PieceColor color);
         bool canCastleQueenSide(PieceColor color);
         bool canCastle(PieceColor color, bool kingSide);
+        bool canCastleCheckOnly(int sx, int sy, int dx, int dy);
         void calcCastlingHint(int x, int y);
 
-        // 移動・ルール判定
-        void movePiece(int sx, int sy, int dx, int dy);
+        // アンパッサン
+        bool executeEnPassant(int sx, int sy, int dx, int dy);
+        void calcEnPassantHint(int x, int y);
+        bool canEnPassantCheckOnly(int sx, int sy, int dx, int dy);
 
+        // 実移動
+        void movePiece(int sx, int sy, int dx, int dy);
+        void executeMove(int sx, int sy, int dx, int dy);
+
+        // 仮想移動
         struct MoveBackup;
 
         MoveBackup simulateMove(int sx, int sy, int dx, int dy);
         void undoSimulateMove(int sx, int sy, int dx, int dy, const MoveBackup& b);
 
-
-        // チェック関連
-        bool isStalemate(PieceColor color);
-
-        bool canCastleCheckOnly(int sx, int sy, int dx, int dy);
-
-        bool canEnPassantCheckOnly(int sx, int sy, int dx, int dy);
-
+        // チェック・勝利判定
+        bool isKingInCheck(PieceColor kingColor);
         bool wouldBeInCheckAfterMove(
             int sx, int sy,
             int dx, int dy,
             PieceColor myColor
         );
-        bool isKingInCheck(PieceColor kingColor);
-
-        bool canMoveByType(int sx, int sy, int dx, int dy);
 
         bool hasAnyLegalMove(int sx, int sy);
-
         bool isCheckmate(PieceColor color);
-        
+        bool isStalemate(PieceColor color);
+
         // プロモーション
         void handlePromotionInput();
+
+        // まとめ
+        void calcNormalMoveHint(const Piece& p, int x, int y);
+        bool trySpecialMove(int sx, int sy, int dx, int dy);
+        bool canMoveByType(int sx, int sy, int dx, int dy);
     };
 }

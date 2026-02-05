@@ -1,12 +1,10 @@
 #include "../../libOne/inc/libOne.h"
 #include "Board.h"
+#include <math.h>
 
 namespace GAME08
 {     
-    static const float CELL = 100.0f;
-    static const float BOARD_X = 200.0f;
-    static const float BOARD_Y = 100.0f;
-
+    // 仮想移動用
     struct Board::MoveBackup {
         Piece from;
         Piece to;
@@ -18,6 +16,7 @@ namespace GAME08
         Piece extra;
     };
     
+    //コンストラクタ
     Board::Board()
         : currentTurn(WHITE),
         selectedX(-1),
@@ -33,6 +32,22 @@ namespace GAME08
         promotionX(0),
         promotionY(0)
     {
+        // ===== 白駒 =====
+        pieceImageId[WHITE][PAWN] = loadImage("../MAIN/assets/game08/white_pawn.png");
+        pieceImageId[WHITE][ROOK] = loadImage("../MAIN/assets/game08/white_rook.png");
+        pieceImageId[WHITE][KNIGHT] = loadImage("../MAIN/assets/game08/white_knight.png");
+        pieceImageId[WHITE][BISHOP] = loadImage("../MAIN/assets/game08/white_bishop.png");
+        pieceImageId[WHITE][QUEEN] = loadImage("../MAIN/assets/game08/white_queen.png");
+        pieceImageId[WHITE][KING] = loadImage("../MAIN/assets/game08/white_king.png");
+
+        // ===== 黒駒 =====
+        pieceImageId[BLACK][PAWN] = loadImage("../MAIN/assets/game08/black_pawn.png");
+        pieceImageId[BLACK][ROOK] = loadImage("../MAIN/assets/game08/black_rook.png");
+        pieceImageId[BLACK][KNIGHT] = loadImage("../MAIN/assets/game08/black_knight.png");
+        pieceImageId[BLACK][BISHOP] = loadImage("../MAIN/assets/game08/black_bishop.png");
+        pieceImageId[BLACK][QUEEN] = loadImage("../MAIN/assets/game08/black_queen.png");
+        pieceImageId[BLACK][KING] = loadImage("../MAIN/assets/game08/black_king.png");
+        // 盤面初期化
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 squares[y][x] = Piece();
@@ -42,7 +57,9 @@ namespace GAME08
             }
         }
 
-        // ポーン配置
+        // 駒の初期配置
+        
+        // ポーン
         for (int x = 0; x < SIZE; x++) {
             squares[1][x] = Piece(PAWN, BLACK);
             squares[6][x] = Piece(PAWN, WHITE);
@@ -72,195 +89,28 @@ namespace GAME08
     // メインループ
     void Board::update()
     {
-        if (inCheckmate)return;
+        if (inCheckmate) return;
 
         if (promotionPending) {
             handlePromotionInput();
             return;
         }
 
-        bool leftClick = isTrigger(MOUSE_LBUTTON);
-        bool rightClick = isTrigger(MOUSE_RBUTTON);
+        InputEvent ev = pollInput();
+        if (!ev.leftClick && !ev.rightClick) return;
 
-        if (!leftClick && !rightClick) return;
-
-        int mx = (int)mouseX;
-        int my = (int)mouseY;
-
-        int bx, by;
-        if (!isInsideBoard(mx, my, bx, by)) return;
-
-        Piece& clicked = squares[by][bx];
-
-        // まだ何も選択していない場合
-        if (selectedX == -1 && selectedY == -1) {
-
-            // 空マスは不可
-            if (clicked.isEmpty()) return;
-
-            // 自分の駒のみ選択可能
-            if (clicked.color != currentTurn) return;
-
-            // 選択
-            selectedX = bx;
-            selectedY = by;
-
-            clearMoveHint();
-
-            //特殊ヒント
-            if (rightClick) {
-                if (clicked.type == KING) {
-                    calcCastlingHint(bx, by);
-                }
-                else if (clicked.type == PAWN) {
-                    calcEnPassantHint(bx, by);
-                }
-                return;
-            }
-
-            //通常ヒント
-            switch (clicked.type) {
-            case PAWN:   calcPawnMoveHint(bx, by); break;
-            case ROOK:   calcRookMoveHint(bx, by); break;
-            case BISHOP: calcBishopMoveHint(bx, by); break;
-            case QUEEN:  calcQueenMoveHint(bx, by); break;
-            case KNIGHT: calcKnightMoveHint(bx, by); break;
-            case KING:   calcKingMoveHint(bx, by); break;
-            }
-
-            return;
-        }
-
-        // すでに駒を選択している場合
-        int sx = selectedX;
-        int sy = selectedY;
-
-        if (sx < 0 || sx >= SIZE || sy < 0 || sy >= SIZE) {
-            return;
-        }
-
-        Piece& selected = squares[sy][sx];
-
-        // 同じ色の駒をクリック → 選び直し
-        if (!clicked.isEmpty() && clicked.color == currentTurn) {
-
-            selectedX = bx;
-            selectedY = by;
-
-            clearMoveHint();
-
-            //右クリックのヒント表示
-            if (hasSelection() && rightClick) {
-                clearMoveHint();
-
-                Piece& p = squares[selectedY][selectedX];
-
-                if (p.type == KING) {
-                    calcCastlingHint(selectedX, selectedY);
-                }
-                else if (p.type == PAWN) {
-                    calcEnPassantHint(selectedX, selectedY);
-                }
-                return;
-            }
-
-            switch (clicked.type) {
-            case PAWN:   calcPawnMoveHint(bx, by); break;
-            case ROOK:   calcRookMoveHint(bx, by); break;
-            case BISHOP: calcBishopMoveHint(bx, by); break;
-            case QUEEN:  calcQueenMoveHint(bx, by); break;
-            case KNIGHT: calcKnightMoveHint(bx, by); break;
-            case KING:   calcKingMoveHint(bx, by); break;
-            }
-
-            return;
-        }
-
-        //特殊手の移動
-        if (!rightClick && hasSelection() && specialMoveHint[by][bx]) 
-        {
-            int sx = selectedX;
-            int sy = selectedY;
-            Piece& p = squares[sy][sx];
-            bool moved = false;
-
-            if (p.type == KING) {
-                moved = executeCastle(sx, sy, bx, by);
-            }
-            else if (p.type == PAWN) {
-                moved = executeEnPassant(sx, sy, bx, by);
-            }
-
-            if (moved) {
-                resetSelection();
-                currentTurn = (currentTurn == WHITE) ? BLACK : WHITE;
-
-                inCheck = isKingInCheck(currentTurn);
-                inCheckmate = isCheckmate(currentTurn);
-            }
-            return; 
-        }
-
-        //通常手の移動
-        bool moved = false;
-
-        switch (selected.type) {
-        case PAWN:   moved = canMovePawn(sx, sy, bx, by); break;
-        case ROOK:   moved = canMoveRook(sx, sy, bx, by); break;
-        case BISHOP: moved = canMoveBishop(sx, sy, bx, by); break;
-        case QUEEN:  moved = canMoveQueen(sx, sy, bx, by); break;
-        case KNIGHT: moved = canMoveKnight(sx, sy, bx, by); break;
-        case KING:   moved = canMoveKing(sx, sy, bx, by); break;
-        }
-
-        if (moved) {
-            //王手が解消されるか確認
-            if (wouldBeInCheckAfterMove(sx, sy, bx, by, currentTurn)) {
-                return; //王手が続く手はNG
-            }
-            if (selected.type == KING) {
-                moveKing(sx, sy, bx, by);
-            }
-            else {
-                movePiece(sx, sy, bx, by);
-                // プロモーション判定
-                if (squares[by][bx].type == PAWN) {
-                    if ((squares[by][bx].color == WHITE && by == 0) ||
-                        (squares[by][bx].color == BLACK && by == 7))
-                    {
-                        promotionPending = true;
-                        promotionX = bx;
-                        promotionY = by;
-                        promotionColor = squares[by][bx].color;
-                        return; // ターンを進めない
-                    }
-                }
-                squares[by][bx].hasMoved = true;
-            }
-
-            resetSelection();
-            currentTurn = (currentTurn == WHITE) ? BLACK : WHITE;
-
-            // 状態更新
-            inCheck = isKingInCheck(currentTurn);
-            inCheckmate = isCheckmate(currentTurn);
-            inStalemate = isStalemate(currentTurn);
-        }
-
+        handleInputEvent(ev);
     }
     void Board::draw()
     {
         drawBoard();
-
         drawMoveHint();
-
         drawPieces();
-
         drawUI();
-
         if (promotionPending) {
             drawPromotionUI();
         }
+        drawCenterStatusText();
     }
 
     // 描画系
@@ -279,10 +129,10 @@ namespace GAME08
                 }
 
                 rect(
-                    BOARD_X + x * CELL,
-                    BOARD_Y + y * CELL,
-                    CELL,
-                    CELL
+                    BOARD_X + x * CELL_SIZE,
+                    BOARD_Y + y * CELL_SIZE,
+                    CELL_SIZE,
+                    CELL_SIZE
                 );
             }
         }
@@ -310,57 +160,45 @@ namespace GAME08
                 }
 
                 rect(
-                    BOARD_X + x * CELL,
-                    BOARD_Y + y * CELL,
-                    CELL,
-                    CELL
+                    BOARD_X + x * CELL_SIZE,
+                    BOARD_Y + y * CELL_SIZE,
+                    CELL_SIZE,
+                    CELL_SIZE
                 );
             }
         }
     }
     void Board::drawPieces()
     {
-        textSize(48);
-
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
 
                 const Piece& p = squares[y][x];
-
-                // 空マスは描画しない
                 if (p.isEmpty()) continue;
 
-                // 色設定
-                if (p.color == WHITE) {
-                    fill(255);        // 白駒
-                }
-                else if (p.color == BLACK) {
-                    fill(0);          // 黒駒
-                }
-                else {
-                    continue;         // 念のため
-                }
+                int imgId = pieceImageId[p.color][p.type];
 
-                // 駒文字
-                char c = p.getChar();
-
-                char str[2] = { c, '\0' };
-
-                text(
-                    str,
-                    BOARD_X + x * CELL + CELL * 0.35f,
-                    BOARD_Y + y * CELL + CELL * 0.65f
+                image(
+                    imgId,
+                    BOARD_X + x * CELL_SIZE,
+                    BOARD_Y + y * CELL_SIZE,
+                    0,
+                    0.19f
                 );
             }
-        }       
+        }
     }
+
 
     // UI系
     void Board::drawUI() 
     {
         drawStatusText();
         drawCheckKingHighlight();
+        drawHelpUI();
+
     }
+
     void Board::drawStatusText()
     {
         float x = 30.0f;
@@ -414,13 +252,13 @@ namespace GAME08
                 Piece& p = squares[y][x];
                 if (p.type == KING && p.color == kingColor) {
 
-                    float px = BOARD_X + x * CELL;
-                    float py = BOARD_Y + y * CELL;
+                    float px = BOARD_X + x * CELL_SIZE;
+                    float py = BOARD_Y + y * CELL_SIZE;
 
                     noFill();
                     stroke(255, 0, 0);
                     strokeWeight(4);
-                    rect(px, py, CELL, CELL);
+                    rect(px, py, CELL_SIZE, CELL_SIZE);
                     strokeWeight(1);
                     noStroke();
 
@@ -429,28 +267,184 @@ namespace GAME08
             }
         }
     }
-    void Board::drawPromotionUI()
+    void Board::drawHelpUI()
     {
-        float x = 1050.0f;
-        float y = 200.0f;
+        // ===== 右側UIエリア =====
+        float panelX = BOARD_X + CELL_SIZE * SIZE + 30;
+        float panelY = BOARD_Y;
+        float panelW = 340;
+        float panelH = CELL_SIZE * SIZE;
 
-        fill(50);
-        rect(x - 20, y - 40, 220, 260);
+        // 背景
+        fill(30, 30, 30, 220);
+        rect(panelX, panelY, panelW, panelH);
+
+        float x = panelX + 20;
+        float y = panelY + 40;
 
         fill(255);
-        textSize(32);
-        text("Promotion", x, y - 10);
+        textSize(30);
+        text("操作説明", x, y);
 
-        const char* labels[4] = { "Q", "R", "B", "N" };
+        y += 50;
+        textSize(22);
+
+        text("■ 左クリック", x, y);
+        y += 30;
+        text("  ・駒を選択", x, y);
+        y += 26;
+        text("  ・移動を実行", x, y);
+
+        y += 36;
+        text("■ 右クリック", x, y);
+        y += 30;
+        text("  ・特殊手の表示", x, y);
+        y += 26;
+        text("  ・キャスリング", x, y);
+        y += 26;
+        text("  ・アンパッサン", x, y);
+
+        y += 40;
+        text("■ プロモーション", x, y);
+        y += 30;
+        text("  ・出現した駒を選択", x, y);
+
+        y += 40;
+        fill(200, 200, 255);
+        text("ENTER : メニューに戻る", x, y);
+    }
+    void Board::drawPromotionUI()
+    {
+        // 画面暗転
+        fill(0, 0, 0, 150);
+        rect(0, 0, Width, Height);
+
+        // UIサイズ
+        const float ICON_SIZE = 80.0f;
+        const float ICON_MARGIN = 12.0f;
+
+        // 表示基準位置
+        float baseX = BOARD_X + promotionX * CELL_SIZE + CELL_SIZE;
+        float baseY = BOARD_Y + promotionY * CELL_SIZE;
+
+        // 画面外にはみ出ない調整
+        if (baseX + ICON_SIZE > Width)
+            baseX = BOARD_X + promotionX * CELL_SIZE - ICON_SIZE - 10;
+
+        if (baseY + ICON_SIZE * 4 > Height)
+            baseY = Height - ICON_SIZE * 4 - 20;
+
+        // 説明テキスト
+        fill(255);
+        textSize(28);
+        text("昇格先を選択してください", baseX - 110, baseY - 30);
+
+        // 選択肢
+        PieceType choices[4] = {
+            QUEEN,
+            ROOK,
+            BISHOP,
+            KNIGHT
+        };
+
+        int mx = MouseX;
+        int my = MouseY;
 
         for (int i = 0; i < 4; i++) {
-            text(
-                labels[i],
-                x,
-                y + 50 + i * 45
+            float x = baseX;
+            float y = baseY + i * (ICON_SIZE + ICON_MARGIN);
+
+            bool hover =
+                mx >= x && mx <= x + ICON_SIZE &&
+                my >= y && my <= y + ICON_SIZE;
+
+            // 外枠（ホバー強調）
+            if (hover) {
+                fill(255, 220, 0);
+                rect(x - 4, y-24, ICON_SIZE + 8, ICON_SIZE + 8);
+            }
+            else {
+                fill(255);
+                rect(x - 2, y-22, ICON_SIZE + 4, ICON_SIZE + 4);
+            }
+
+            // 背景
+            fill(60);
+            rect(x, y-20, ICON_SIZE, ICON_SIZE);
+
+            // 駒画像
+            int img = pieceImageId[promotionColor][choices[i]];
+            image(
+                img,
+                x-10,
+                y-32,
+                0,
+                0.19
             );
         }
     }
+    void Board::drawCenterStatusText()
+    {
+        const char* msg = nullptr;
+
+        if (inCheckmate)      msg = "CHECKMATE";
+        else if (inStalemate) msg = "STALEMATE";
+        else if (inCheck)     msg = "CHECK";
+        else {
+            statusAnimFrame = -1;
+            return;
+        }
+
+        // 盤面中央
+        float cx = BOARD_X + CELL_SIZE * SIZE * 0.5f;
+        float cy = BOARD_Y + CELL_SIZE * SIZE * 0.5f;
+
+        // 自前フレームカウンタ
+        if (statusAnimFrame < 0) statusAnimFrame = 0;
+        statusAnimFrame++;
+
+        int elapsed = statusAnimFrame;
+
+        // アニメーション制御
+        float scale = 1.0f;
+        int alpha = 255;
+
+        if (elapsed < 30) {
+            // フェードイン＋拡大
+            scale = 0.7f + elapsed * 0.02f;
+            alpha = elapsed * 8;
+        }
+        else if (elapsed < 120) {
+            // 安定表示
+            scale = 1.3f;
+            alpha = 255;
+        }
+        else {
+            // フェードアウト
+            alpha = 255 - (elapsed - 120) * 5;
+            if (alpha < 0) alpha = 0;
+        }
+
+        // 文字サイズ
+        int baseSize = inCheckmate ? 96 : 72;
+        int size = (int)(baseSize * scale);
+        textSize(size);
+
+        // 色
+        if (inCheckmate)      fill(240, 220, 120, alpha); // 金
+        else if (inCheck)     fill(220, 80, 80, alpha);   // 赤
+        else                  fill(200, 200, 200, alpha); // グレー
+
+        // 中央寄せ
+        float approxWidth = strlen(msg) * size * 0.6f;
+
+        text(
+            msg,
+            cx - approxWidth * 0.4f,
+            cy - size * 0.4f
+        );
+    }
+
 
     // 入力・選択
     bool Board::hasSelection() const {
@@ -459,14 +453,129 @@ namespace GAME08
     bool Board::isInsideBoard(int mx, int my, int& bx, int& by)
     {
         if (mx < BOARD_X || my < BOARD_Y) return false;
-        if (mx >= BOARD_X + CELL * SIZE) return false;
-        if (my >= BOARD_Y + CELL * SIZE) return false;
+        if (mx >= BOARD_X + CELL_SIZE * SIZE) return false;
+        if (my >= BOARD_Y + CELL_SIZE * SIZE) return false;
 
-        bx = (int)((mx - BOARD_X) / CELL);
-        by = (int)((my - BOARD_Y) / CELL);
+        bx = (int)((mx - BOARD_X) / CELL_SIZE);
+        by = (int)((my - BOARD_Y) / CELL_SIZE);
 
         return true;
     }
+    Board::InputEvent Board::pollInput()
+    {
+        InputEvent ev;
+
+        ev.leftClick = isTrigger(MOUSE_LBUTTON);
+        ev.rightClick = isTrigger(MOUSE_RBUTTON);
+
+        if (!ev.leftClick && !ev.rightClick) return ev;
+
+        int mx = (int)mouseX;
+        int my = (int)mouseY;
+
+        if (!isInsideBoard(mx, my, ev.bx, ev.by)) {
+            ev.bx = ev.by = -1;
+        }
+
+        return ev;
+    }
+
+    void Board::handleInputEvent(const InputEvent& ev)
+    {
+        if (ev.bx < 0 || ev.by < 0) return;
+
+        if (!hasSelection()) {
+            handleSelect(ev);
+        }
+        else {
+            handleAction(ev);
+        }
+    }
+    void Board::handleSelect(const InputEvent& ev)
+    {
+        Piece& p = squares[ev.by][ev.bx];
+        if (p.isEmpty()) return;
+        if (p.color != currentTurn) return;
+
+        selectedX = ev.bx;
+        selectedY = ev.by;
+
+        clearMoveHint();
+
+        if (ev.rightClick) {
+            if (p.type == KING)  calcCastlingHint(ev.bx, ev.by);
+            if (p.type == PAWN)  calcEnPassantHint(ev.bx, ev.by);
+            return;
+        }
+
+        calcNormalMoveHint(p, ev.bx, ev.by);
+    }
+    void Board::handleAction(const InputEvent& ev)
+    {
+        int sx = selectedX;
+        int sy = selectedY;
+
+        Piece& p = squares[sy][sx];
+
+        // 選び直し
+        if (!squares[ev.by][ev.bx].isEmpty() &&
+            squares[ev.by][ev.bx].color == currentTurn) {
+
+            selectedX = ev.bx;
+            selectedY = ev.by;
+
+            clearMoveHint();
+            calcNormalMoveHint(squares[ev.by][ev.bx], ev.bx, ev.by);
+            return;
+        }
+
+        // 特殊手
+        if (ev.rightClick && specialMoveHint[ev.by][ev.bx]) {
+            if (trySpecialMove(sx, sy, ev.bx, ev.by)) {
+                finalizeMove();
+            }
+            return;
+        }
+
+        // 通常手
+        if (canMoveByType(sx, sy, ev.bx, ev.by)) {
+            if (wouldBeInCheckAfterMove(sx, sy, ev.bx, ev.by, currentTurn)) return;
+
+            executeMove(sx, sy, ev.bx, ev.by);
+            if (!promotionPending) {
+                finalizeMove();
+            }
+        }
+    }
+    void Board::finalizeMove()
+    {
+        resetSelection();
+        currentTurn = (currentTurn == WHITE) ? BLACK : WHITE;
+
+        inCheck = isKingInCheck(currentTurn);
+        inCheckmate = isCheckmate(currentTurn);
+        inStalemate = isStalemate(currentTurn);
+
+        // 演出開始
+        if (inCheck || inCheckmate || inStalemate) {
+            statusAnimFrame = 0;
+            statusAnimActive = true;
+        }
+    }
+
+    // 共通ユーティリティ
+    bool Board::isInside(int x, int y) const {
+        return x >= 0 && x < 8 && y >= 0 && y < 8;
+    }
+    bool Board::isEmpty(int x, int y) const {
+        return isInside(x, y) && squares[y][x].isEmpty();
+    }
+    bool Board::isEnemy(int x, int y, PieceColor myColor) const {
+        return isInside(x, y)
+            && !squares[y][x].isEmpty()
+            && squares[y][x].color != myColor;
+    }
+
     void Board::clearMoveHint()
     {
         for (int y = 0; y < SIZE; y++) {
@@ -483,75 +592,7 @@ namespace GAME08
         selectedX = selectedY = -1;
     }
 
-    // 共通ユーティリティ
-    bool Board::isInside(int x, int y) const {
-        return x >= 0 && x < 8 && y >= 0 && y < 8;
-    }
-    bool Board::isEmpty(int x, int y) const {
-        return isInside(x, y) && squares[y][x].isEmpty();
-    }
-    bool Board::isEnemy(int x, int y, PieceColor myColor) const {
-        return isInside(x, y)
-            && !squares[y][x].isEmpty()
-            && squares[y][x].color != myColor;
-    }
-
-    // 共通移動ロジック
-    bool Board::canMoveStraight(int sx, int sy, int dx, int dy)
-    {
-        if (!isInside(dx, dy)) return false;
-
-        // 縦でも横でもない
-        if (sx != dx && sy != dy) return false;
-
-        int stepX = (dx > sx) ? 1 : (dx < sx ? -1 : 0);
-        int stepY = (dy > sy) ? 1 : (dy < sy ? -1 : 0);
-
-        int cx = sx + stepX;
-        int cy = sy + stepY;
-
-        while (cx != dx || cy != dy) {
-            if (!isEmpty(cx, cy)) return false;
-            cx += stepX;
-            cy += stepY;
-        }
-
-        // 行き先が味方ならNG
-        if (!isEmpty(dx, dy) &&
-            squares[dy][dx].color == squares[sy][sx].color) {
-            return false;
-        }
-
-        return true;
-    }
-    bool Board::canMoveDiagonal(int sx, int sy, int dx, int dy)
-    {
-        if (!isInside(dx, dy)) return false;
-
-        int dxDir = dx - sx;
-        int dyDir = dy - sy;
-
-        if (abs(dxDir) != abs(dyDir)) return false;
-
-        int stepX = (dxDir > 0) ? 1 : -1;
-        int stepY = (dyDir > 0) ? 1 : -1;
-
-        int x = sx + stepX;
-        int y = sy + stepY;
-
-        while (x != dx) {
-            if (!isEmpty(x, y)) return false;
-            x += stepX;
-            y += stepY;
-        }
-
-        // 行き先が味方ならNG
-        if (!isEmpty(dx, dy) &&
-            squares[dy][dx].color == squares[sy][sx].color)
-            return false;
-
-        return true;
-    }
+    // 駒ごとの移動
 
     // ポーン
     void Board::calcPawnMoveHint(int x, int y)
@@ -632,45 +673,6 @@ namespace GAME08
 
         return (ty == sy + dir) &&
             (tx == sx - 1 || tx == sx + 1);
-    }
-    bool Board::executeEnPassant(int sx, int sy, int dx, int dy)
-    {
-        if (!enPassantAvailable) return false;
-
-        Piece& pawn = squares[sy][sx];
-        if (pawn.type != PAWN) return false;
-
-        int dir = (pawn.color == WHITE) ? -1 : 1;
-
-        // 移動先チェック
-        if (dx != enPassantX || dy != sy + dir)
-            return false;
-
-        // 取られるポーン確認
-        Piece& target = squares[sy][dx];
-        if (target.type != PAWN || target.color == pawn.color)
-            return false;
-
-        // 実行
-        squares[sy][dx] = Piece();   // 敵ポーン除去
-        movePiece(sx, sy, dx, dy);
-
-        enPassantAvailable = false;
-        return true;
-    }
-    void Board::calcEnPassantHint(int x, int y)
-    {
-        if (!enPassantAvailable) return;
-
-        Piece& pawn = squares[y][x];
-        if (pawn.type != PAWN) return;
-
-        int dir = (pawn.color == WHITE) ? -1 : 1;
-
-        // ★ ここが修正点
-        if (abs(enPassantX - x) == 1 && enPassantY == y + dir) {
-            specialMoveHint[y + dir][enPassantX] = true;
-        }
     }
 
     // ルーク
@@ -939,7 +941,67 @@ namespace GAME08
 
         return false;
     }
- 
+
+    // 共通移動ロジック
+    bool Board::canMoveStraight(int sx, int sy, int dx, int dy)
+    {
+        if (!isInside(dx, dy)) return false;
+
+        // 縦でも横でもない
+        if (sx != dx && sy != dy) return false;
+
+        int stepX = (dx > sx) ? 1 : (dx < sx ? -1 : 0);
+        int stepY = (dy > sy) ? 1 : (dy < sy ? -1 : 0);
+
+        int cx = sx + stepX;
+        int cy = sy + stepY;
+
+        while (cx != dx || cy != dy) {
+            if (!isEmpty(cx, cy)) return false;
+            cx += stepX;
+            cy += stepY;
+        }
+
+        // 行き先が味方ならNG
+        if (!isEmpty(dx, dy) &&
+            squares[dy][dx].color == squares[sy][sx].color) {
+            return false;
+        }
+
+        return true;
+    }
+    bool Board::canMoveDiagonal(int sx, int sy, int dx, int dy)
+    {
+        if (!isInside(dx, dy)) return false;
+
+        int dxDir = dx - sx;
+        int dyDir = dy - sy;
+
+        if (abs(dxDir) != abs(dyDir)) return false;
+
+        int stepX = (dxDir > 0) ? 1 : -1;
+        int stepY = (dyDir > 0) ? 1 : -1;
+
+        int x = sx + stepX;
+        int y = sy + stepY;
+
+        while (x != dx) {
+            if (!isEmpty(x, y)) return false;
+            x += stepX;
+            y += stepY;
+        }
+
+        // 行き先が味方ならNG
+        if (!isEmpty(dx, dy) &&
+            squares[dy][dx].color == squares[sy][sx].color)
+            return false;
+
+        return true;
+    }
+
+    // 特殊ルール
+
+    // キャスリング
     bool Board::executeCastle(int sx, int sy, int dx, int dy)
     {
         Piece& k = squares[sy][sx];
@@ -954,26 +1016,37 @@ namespace GAME08
         moveKing(sx, sy, dx, dy);
         return true;
     }
-    void Board::moveKing(int sx, int sy, int dx, int dy) {
-        bool isCastling = (abs(dx - sx) == 2);
+    bool Board::canCastle(PieceColor color, bool kingSide)
+    {
+        // 共通：今チェックされていたら不可
+        if (isKingInCheck(color))
+            return false;
 
-        if (isCastling) {
-            int step = (dx > sx) ? 1 : -1;
-            int rookFromX = (step == 1) ? 7 : 0;
-            int rookToX = sx + step;
+        if (kingSide)
+            return canCastleKingSide(color);
+        else
+            return canCastleQueenSide(color);
+    }
+    void Board::calcCastlingHint(int x, int y)
+    {
+        Piece& king = squares[y][x];
+        if (king.type != KING) return;
 
-            // ルーク移動
-            squares[sy][rookToX] = squares[sy][rookFromX];
-            squares[sy][rookToX].hasMoved = true;
-            squares[sy][rookFromX] = Piece();
+        // すでにチェック中なら不可
+        if (isKingInCheck(king.color)) return;
+
+        int row = (king.color == WHITE) ? 7 : 0;
+
+        // キング側
+        if (canCastleKingSide(king.color)) {
+            specialMoveHint[row][6] = true;
         }
 
-        // キング移動
-        squares[dy][dx] = squares[sy][sx];
-        squares[dy][dx].hasMoved = true;
-        squares[sy][sx] = Piece();
+        // クイーン側
+        if (canCastleQueenSide(king.color)) {
+            specialMoveHint[row][2] = true;
+        }
     }
-
     bool Board::canCastleKingSide(PieceColor color)
     {
         int row = (color == WHITE) ? 7 : 0;
@@ -1029,37 +1102,87 @@ namespace GAME08
         return true;
 
     }
-    bool Board::canCastle(PieceColor color, bool kingSide)
+    bool Board::canCastleCheckOnly(int sx, int sy, int dx, int dy)
     {
-        // 共通：今チェックされていたら不可
-        if (isKingInCheck(color))
+        Piece& k = squares[sy][sx];
+        if (k.type != KING) return false;
+
+        // キングの2マス移動か？
+        if (abs(dx - sx) != 2 || dy != sy) return false;
+
+        bool kingSide = (dx > sx);
+
+        // ルール上キャスリング可能か
+        if (!canCastle(k.color, kingSide)) return false;
+
+        // 仮想的に動かして王手にならないか
+        if (wouldBeInCheckAfterMove(sx, sy, dx, dy, k.color))
             return false;
 
-        if (kingSide)
-            return canCastleKingSide(color);
-        else
-            return canCastleQueenSide(color);
+        return true;
     }
-    void Board::calcCastlingHint(int x, int y)
+
+    // アンパッサン
+    bool Board::executeEnPassant(int sx, int sy, int dx, int dy)
     {
-        Piece& king = squares[y][x];
-        if (king.type != KING) return;
+        if (!enPassantAvailable) return false;
 
-        // すでにチェック中なら不可
-        if (isKingInCheck(king.color)) return;
+        Piece& pawn = squares[sy][sx];
+        if (pawn.type != PAWN) return false;
 
-        int row = (king.color == WHITE) ? 7 : 0;
+        int dir = (pawn.color == WHITE) ? -1 : 1;
 
-        // キング側
-        if (canCastleKingSide(king.color)) {
-            specialMoveHint[row][6] = true;
-        }
+        // 移動先チェック
+        if (dx != enPassantX || dy != sy + dir)
+            return false;
 
-        // クイーン側
-        if (canCastleQueenSide(king.color)) {
-            specialMoveHint[row][2] = true;
+        // 取られるポーン確認
+        Piece& target = squares[sy][dx];
+        if (target.type != PAWN || target.color == pawn.color)
+            return false;
+
+        // 実行
+        squares[sy][dx] = Piece();   // 敵ポーン除去
+        movePiece(sx, sy, dx, dy);
+
+        enPassantAvailable = false;
+        return true;
+    }
+    void Board::calcEnPassantHint(int x, int y)
+    {
+        if (!enPassantAvailable) return;
+
+        Piece& pawn = squares[y][x];
+        if (pawn.type != PAWN) return;
+
+        int dir = (pawn.color == WHITE) ? -1 : 1;
+
+        // ★ ここが修正点
+        if (abs(enPassantX - x) == 1 && enPassantY == y + dir) {
+            specialMoveHint[y + dir][enPassantX] = true;
         }
     }
+    bool Board::canEnPassantCheckOnly(int sx, int sy, int dx, int dy)
+    {
+        if (!enPassantAvailable) return false;
+
+        Piece& p = squares[sy][sx];
+        if (p.type != PAWN) return false;
+
+        int dir = (p.color == WHITE) ? -1 : 1;
+
+        // アンパッサンの移動先か？
+        if (dx != enPassantX || dy != sy + dir)
+            return false;
+
+        // 仮想的に動かして王手にならないか
+        if (wouldBeInCheckAfterMove(sx, sy, dx, dy, p.color))
+            return false;
+
+        return true;
+    }
+
+    // 実移動・仮想移動
 
     // 実移動
     void Board::movePiece(int sx, int sy, int dx, int dy)
@@ -1080,18 +1203,42 @@ namespace GAME08
         squares[dy][dx].hasMoved = true;
         squares[sy][sx] = Piece();
     }
-    bool Board::canMoveByType(int sx, int sy, int dx, int dy)
-    {
-        Piece& p = squares[sy][sx];
+    void Board::moveKing(int sx, int sy, int dx, int dy) {
+        bool isCastling = (abs(dx - sx) == 2);
 
-        switch (p.type) {
-        case PAWN:   return canMovePawn(sx, sy, dx, dy);
-        case ROOK:   return canMoveRook(sx, sy, dx, dy);
-        case BISHOP: return canMoveBishop(sx, sy, dx, dy);
-        case QUEEN:  return canMoveQueen(sx, sy, dx, dy);
-        case KNIGHT: return canMoveKnight(sx, sy, dx, dy);
-        case KING:   return canMoveKing(sx, sy, dx, dy);
-        default:     return false;
+        if (isCastling) {
+            int step = (dx > sx) ? 1 : -1;
+            int rookFromX = (step == 1) ? 7 : 0;
+            int rookToX = sx + step;
+
+            // ルーク移動
+            squares[sy][rookToX] = squares[sy][rookFromX];
+            squares[sy][rookToX].hasMoved = true;
+            squares[sy][rookFromX] = Piece();
+        }
+
+        // キング移動
+        squares[dy][dx] = squares[sy][sx];
+        squares[dy][dx].hasMoved = true;
+        squares[sy][sx] = Piece();
+    }
+    void Board::executeMove(int sx, int sy, int dx, int dy)
+    {
+        Piece moved = squares[sy][sx];
+
+        if (moved.type == KING) {
+            moveKing(sx, sy, dx, dy);
+        }
+        else {
+            movePiece(sx, sy, dx, dy);
+        }
+
+        // プロモーション判定
+        if (moved.type == PAWN && (dy == 0 || dy == 7)) {
+            promotionPending = true;
+            promotionX = dx;
+            promotionY = dy;
+            promotionColor = moved.color;
         }
     }
 
@@ -1141,80 +1288,7 @@ namespace GAME08
         }
     }
 
-    // チェック関連
-    bool Board::isStalemate(PieceColor color)
-    {
-        // チェックされていたらステイルメイトではない
-        if (isKingInCheck(color)) return false;
-
-        // 自分の駒すべてを調べる
-        for (int sy = 0; sy < SIZE; sy++) {
-            for (int sx = 0; sx < SIZE; sx++) {
-
-                Piece& p = squares[sy][sx];
-                if (p.isEmpty() || p.color != color) continue;
-
-                // 1つでも合法手があれば継続
-                if (hasAnyLegalMove(sx, sy)) {
-                    return false;
-                }
-            }
-        }
-
-        // チェックされてない & 合法手ゼロ
-        return true;
-    }
-    bool Board::canCastleCheckOnly(int sx, int sy, int dx, int dy)
-    {
-        Piece& k = squares[sy][sx];
-        if (k.type != KING) return false;
-
-        // キングの2マス移動か？
-        if (abs(dx - sx) != 2 || dy != sy) return false;
-
-        bool kingSide = (dx > sx);
-
-        // ルール上キャスリング可能か
-        if (!canCastle(k.color, kingSide)) return false;
-
-        // 仮想的に動かして王手にならないか
-        if (wouldBeInCheckAfterMove(sx, sy, dx, dy, k.color))
-            return false;
-
-        return true;
-    }
-    bool Board::canEnPassantCheckOnly(int sx, int sy, int dx, int dy)
-    {
-        if (!enPassantAvailable) return false;
-
-        Piece& p = squares[sy][sx];
-        if (p.type != PAWN) return false;
-
-        int dir = (p.color == WHITE) ? -1 : 1;
-
-        // アンパッサンの移動先か？
-        if (dx != enPassantX || dy != sy + dir)
-            return false;
-
-        // 仮想的に動かして王手にならないか
-        if (wouldBeInCheckAfterMove(sx, sy, dx, dy, p.color))
-            return false;
-
-        return true;
-    }
-    bool Board::wouldBeInCheckAfterMove(
-        int sx, int sy,
-        int dx, int dy,
-        PieceColor color
-    ) {
-        MoveBackup backup = simulateMove(sx, sy, dx, dy);
-
-        bool inCheck = isKingInCheck(color);
-
-        undoSimulateMove(sx, sy, dx, dy, backup);
-
-        return inCheck;
-    }
+    // チェック・勝敗判定
     bool Board::isKingInCheck(PieceColor kingColor)
     {
         int kingX = -1;
@@ -1276,8 +1350,19 @@ namespace GAME08
 
         return false;
     }
-    
-    // 勝敗判定
+    bool Board::wouldBeInCheckAfterMove(
+        int sx, int sy,
+        int dx, int dy,
+        PieceColor color
+    ) {
+        MoveBackup backup = simulateMove(sx, sy, dx, dy);
+
+        bool inCheck = isKingInCheck(color);
+
+        undoSimulateMove(sx, sy, dx, dy, backup);
+
+        return inCheck;
+    }
     bool Board::hasAnyLegalMove(int sx, int sy)
     {
         Piece& p = squares[sy][sx];
@@ -1331,6 +1416,28 @@ namespace GAME08
         //チェックメイト
         return true;
     }
+    bool Board::isStalemate(PieceColor color)
+    {
+        // チェックされていたらステイルメイトではない
+        if (isKingInCheck(color)) return false;
+
+        // 自分の駒すべてを調べる
+        for (int sy = 0; sy < SIZE; sy++) {
+            for (int sx = 0; sx < SIZE; sx++) {
+
+                Piece& p = squares[sy][sx];
+                if (p.isEmpty() || p.color != color) continue;
+
+                // 1つでも合法手があれば継続
+                if (hasAnyLegalMove(sx, sy)) {
+                    return false;
+                }
+            }
+        }
+
+        // チェックされてない & 合法手ゼロ
+        return true;
+    }
 
     // プロモーション 
     void Board::handlePromotionInput()
@@ -1340,38 +1447,47 @@ namespace GAME08
         int mx = (int)mouseX;
         int my = (int)mouseY;
 
-        // UI配置（drawPromotionUIと一致させる）
-        float x = 1050.0f;
-        float y = 200.0f;
+        // === drawPromotionUI と完全一致させる ===
+        const float ICON_SIZE = 80.0f;
+        const float ICON_MARGIN = 12.0f;
 
-        // 各選択肢の当たり判定
+        float baseX = BOARD_X + promotionX * CELL_SIZE + CELL_SIZE;
+        float baseY = BOARD_Y + promotionY * CELL_SIZE;
+
+        // 横はみ出し補正
+        if (baseX + ICON_SIZE > Width)
+            baseX = BOARD_X + promotionX * CELL_SIZE - ICON_SIZE - 10;
+
+        // 縦はみ出し補正
+        if (baseY + ICON_SIZE * 4 > Height)
+            baseY = Height - ICON_SIZE * 4 - 20;
+
+        PieceType choices[4] = {
+            QUEEN,
+            ROOK,
+            BISHOP,
+            KNIGHT
+        };
+
         for (int i = 0; i < 4; i++) {
 
-            float tx = x;
-            float ty = y + 50 + i * 45;
+            float x = baseX;
+            float y = baseY + i * (ICON_SIZE + ICON_MARGIN);
 
-            // 簡易当たり判定（文字周辺）
-            if (mx >= tx - 20 && mx <= tx + 40 &&
-                my >= ty - 35 && my <= ty + 5)
+            // drawPromotionUI の「背景 rect」と一致
+            float rx = x;
+            float ry = y - 20;
+
+            if (mx >= rx && mx <= rx + ICON_SIZE &&
+                my >= ry && my <= ry + ICON_SIZE)
             {
-                PieceType newType;
-
-                switch (i) {
-                case 0: newType = QUEEN;  break;
-                case 1: newType = ROOK;   break;
-                case 2: newType = BISHOP; break;
-                case 3: newType = KNIGHT; break;
-                }
-
-                // 駒を昇格
+                // 昇格
                 squares[promotionY][promotionX] =
-                    Piece(newType, promotionColor);
+                    Piece(choices[i], promotionColor);
 
                 squares[promotionY][promotionX].hasMoved = true;
 
                 resetSelection();
-
-                // 状態解除
                 promotionPending = false;
 
                 // ターン交代
@@ -1387,4 +1503,43 @@ namespace GAME08
         }
     }
 
+    // まとめ関数
+    void Board::calcNormalMoveHint(const Piece& p, int x, int y)
+    {
+        switch (p.type) {
+        case PAWN:   calcPawnMoveHint(x, y);   break;
+        case ROOK:   calcRookMoveHint(x, y);   break;
+        case BISHOP: calcBishopMoveHint(x, y); break;
+        case QUEEN:  calcQueenMoveHint(x, y);  break;
+        case KNIGHT: calcKnightMoveHint(x, y); break;
+        case KING:   calcKingMoveHint(x, y);   break;
+        default: break;
+        }
+    }
+    bool Board::trySpecialMove(int sx, int sy, int dx, int dy)
+    {
+        Piece& p = squares[sy][sx];
+
+        if (p.type == KING) {
+            return executeCastle(sx, sy, dx, dy);
+        }
+        if (p.type == PAWN) {
+            return executeEnPassant(sx, sy, dx, dy);
+        }
+        return false;
+    }
+    bool Board::canMoveByType(int sx, int sy, int dx, int dy)
+    {
+        Piece& p = squares[sy][sx];
+
+        switch (p.type) {
+        case PAWN:   return canMovePawn(sx, sy, dx, dy);
+        case ROOK:   return canMoveRook(sx, sy, dx, dy);
+        case BISHOP: return canMoveBishop(sx, sy, dx, dy);
+        case QUEEN:  return canMoveQueen(sx, sy, dx, dy);
+        case KNIGHT: return canMoveKnight(sx, sy, dx, dy);
+        case KING:   return canMoveKing(sx, sy, dx, dy);
+        default:     return false;
+        }
+    }
 }
