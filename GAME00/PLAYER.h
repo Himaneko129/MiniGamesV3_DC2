@@ -11,26 +11,24 @@ namespace GAME00 {
         float y = 0;
         float vx = 0;
         float vy = 0;
-
         float width = 40;
         float height = 60;
 
         bool onGround = false;
-        bool onWall = false;
+        bool onWallLeft = false;
+        bool onWallRight = false;
 
-        float coyoteTimer = 0.0f;
-        const float coyoteTime = 0.1f;
+        // ダッシュ関連
+        bool isChargingDash = false;
+        float dashChargeTimer = 0.6f;
+        float dashCooldownTimer = 0.0f;
 
-        void init(float startX, float startY) {
-            x = startX;
-            y = startY;
-            vx = vy = 0;
-            onGround = onWall = false;
-            coyoteTimer = 0;
-        }
+        // 定数
+        static constexpr float DASH_CHARGE_MAX = 1.0f;
+        static constexpr float DASH_COOLDOWN_MAX = 1.5f;
 
-        void update(const std::vector<Platform>& platforms);
+        void update(float dt, const std::vector<Platform>& platforms);
         void draw(float camX, float camY);
+        void drawDashArrow(float camX, float camY);
     };
-
 }

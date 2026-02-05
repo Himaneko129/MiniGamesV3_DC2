@@ -136,6 +136,7 @@
     <ClCompile Include="CourseData.cpp" />
     <ClCompile Include="CourseManager.cpp" />
     <ClCompile Include="GAME00.cpp" />
+    <ClCompile Include="Sound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CourseData.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="PlatformData.h" />
     <ClInclude Include="PLAYER.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="Sound.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\MAIN\assets\game00\title.txt" />
