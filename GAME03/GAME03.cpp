@@ -209,7 +209,8 @@ namespace GAME03 {
         if (dir == DOWN)  return (from.goalY == 2 && to.startY == 0 && from.goalX == to.startX);
         if (dir == UP)    return (from.goalY == 0 && to.startY == 2 && from.goalX == to.startX);
         return false;
-    }void GAME::generateMap()
+    }
+    void GAME::generateMap()
     {
         const int targetBlocks = getTargetBlocks();
         const int order[9] = { 0,1,2, 5,4,3, 6,7,8 };
@@ -365,7 +366,6 @@ namespace GAME03 {
             visitCount = 1;
 
             moveHistory.clear();
-            moveHistory.push_back({ px, py });
 
             playInitFlg = true;
             debugGenFailed = false;
@@ -447,7 +447,6 @@ namespace GAME03 {
             else if (y2 == y1 - 1) arrow[y1][x1] = UP;
         }
     }
-
     void GAME::handleInput()
     {
         static bool prevA = false, prevD = false, prevW = false, prevS = false, prevR = false;
@@ -460,10 +459,11 @@ namespace GAME03 {
 
         // =====================
         // ① 戻る処理（最優先）
-        if (r && !prevR && !moveHistory.empty())
+        // =====================
+        if (r && !prevR && !moveHistory.empty() && undoLeft > 0)
         {
-            // 現在地を消す（スタート以外）
-            if (!(px == startPX && py == startPY)) {
+            // 昔のそのまま
+            if (!(px == startPX && py == startPY) && visited[py][px] && visitCount > 1) {
                 visited[py][px] = false;
                 visitCount--;
             }
@@ -472,6 +472,8 @@ namespace GAME03 {
             moveHistory.pop_back();
             px = prev.first;
             py = prev.second;
+
+            undoLeft--; 
         }
         else
         {
@@ -493,20 +495,26 @@ namespace GAME03 {
                     board[ny][nx] != BLOCK &&
                     !visited[ny][nx])
                 {
+                    // ★移動前を履歴に保存（この方式を維持）
                     moveHistory.push_back({ px, py });
+
                     px = nx;
                     py = ny;
+
                     visited[py][px] = true;
                     visitCount++;
                 }
             }
         }
 
+        // 入力更新
         prevA = a;
         prevD = d;
         prevW = w;
         prevS = s;
         prevR = r;
+
+        // ヒント表示
         if (isTrigger(KEY_F)) {
             showRoute = !showRoute;
         }
@@ -519,6 +527,7 @@ namespace GAME03 {
             State = CLEAR;
         }
     }
+
     void GAME::drawBoard() {
         clear(0, 0, 0);
 
@@ -614,8 +623,8 @@ namespace GAME03 {
         gameClear = false;
         showClearRoute = false;
         moveHistory.clear();
-
         undoLeft = getUndoLimit();
+
     }
 
 
@@ -636,7 +645,7 @@ namespace GAME03 {
             textSize(32);
             drawCenteredText("迷路ゲーム", 960, 100);
             textSize(24);
-            drawCenteredText("難易度とマップ番号を選んでください", 960, 180);
+            drawCenteredText("難易度を選んでください", 960, 180);
 
             text("ENTERキーでメニューに戻る", 0, 1080);
             if (isTrigger(KEY_ENTER)) {
@@ -691,7 +700,6 @@ namespace GAME03 {
                 generateMap();
                 undoLeft = getUndoLimit();// ← ここで px/py/visited/visitCount まで完成させる
                 moveHistory.clear();
-                moveHistory.push_back({ px, py }); // スタートを履歴に入れるならこれ
                 playInitFlg = true;
             }
 
