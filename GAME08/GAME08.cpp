@@ -28,11 +28,6 @@ namespace GAME08
 		board->update();
 		board->draw();
 
-		// –ß‚éˆ—
-		fill(255);
-		textSize(30);
-		text("ENTER : ƒƒjƒ…[‚É–ß‚é", 50, 1050);
-
 		if (isTrigger(KEY_ENTER)) {
 			main()->backToMenu();
 		}
