@@ -5,6 +5,7 @@ namespace GAME08
 {
     class Board {
     public:
+        void resetBoard();
         // ’è”EŠî–{ó‘Ô
         static const int SIZE = 8;
 

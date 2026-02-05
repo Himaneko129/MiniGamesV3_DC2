@@ -89,6 +89,10 @@ namespace GAME08
     // メインループ
     void Board::update()
     {
+        if (isTrigger(KEY_R)) {
+            resetBoard();
+            return;
+        }
         if (inCheckmate) return;
 
         if (promotionPending) {
@@ -309,9 +313,13 @@ namespace GAME08
         y += 30;
         text("  ・出現した駒を選択", x, y);
 
-        y += 40;
+        y += 60;
         fill(200, 200, 255);
+        text("R : 盤面リセット", x, y);
+
+        y += 40;
         text("ENTER : メニューに戻る", x, y);
+        noFill();
     }
     void Board::drawPromotionUI()
     {
@@ -443,6 +451,36 @@ namespace GAME08
             cx - approxWidth * 0.4f,
             cy - size * 0.4f
         );
+        // 勝者表示
+        if (inCheckmate && elapsed > 20) {
+            PieceColor winner =
+                (currentTurn == WHITE) ? BLACK : WHITE;
+
+            const char* winText =
+                (winner == WHITE) ? "White Wins" : "Black Wins";
+
+            int subSize = (int)(36 * scale);
+            textSize(subSize);
+
+            int subAlpha = alpha;
+            if (elapsed < 50) subAlpha = (elapsed - 20) * 8;
+            if (subAlpha > 255) subAlpha = 255;
+
+            if (winner == WHITE) {
+                fill(256, 256, 256, subAlpha);
+            }
+            else {
+                fill(50, 50, 50, subAlpha);
+            }
+
+            float subWidth = strlen(winText) * subSize * 0.6f;
+
+            text(
+                winText,
+                cx - subWidth * 0.5f,
+                cy + size * 0.6f
+            );
+        }
     }
 
 
@@ -1542,4 +1580,59 @@ namespace GAME08
         default:     return false;
         }
     }
+
+    // 盤面初期化関数
+    void Board::resetBoard()
+    {
+        // ===== 駒配置 =====
+        for (int y = 0; y < SIZE; y++) {
+            for (int x = 0; x < SIZE; x++) {
+                squares[y][x] = Piece();
+            }
+        }
+
+        // ポーン
+        for (int x = 0; x < SIZE; x++) {
+            squares[1][x] = Piece(PAWN, BLACK);
+            squares[6][x] = Piece(PAWN, WHITE);
+        }
+
+        // ルーク
+        squares[0][0] = squares[0][7] = Piece(ROOK, BLACK);
+        squares[7][0] = squares[7][7] = Piece(ROOK, WHITE);
+
+        // ナイト
+        squares[0][1] = squares[0][6] = Piece(KNIGHT, BLACK);
+        squares[7][1] = squares[7][6] = Piece(KNIGHT, WHITE);
+
+        // ビショップ
+        squares[0][2] = squares[0][5] = Piece(BISHOP, BLACK);
+        squares[7][2] = squares[7][5] = Piece(BISHOP, WHITE);
+
+        // クイーン
+        squares[0][3] = Piece(QUEEN, BLACK);
+        squares[7][3] = Piece(QUEEN, WHITE);
+
+        // キング
+        squares[0][4] = Piece(KING, BLACK);
+        squares[7][4] = Piece(KING, WHITE);
+
+        // ===== 状態リセット =====
+        currentTurn = WHITE;
+
+        selectedX = selectedY = -1;
+        clearMoveHint();
+
+        enPassantAvailable = false;
+        enPassantX = enPassantY = 0;
+
+        inCheck = false;
+        inCheckmate = false;
+        inStalemate = false;
+
+        promotionPending = false;
+
+        statusAnimFrame = -1;
+    }
+
 }
